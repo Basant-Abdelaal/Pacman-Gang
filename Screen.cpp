@@ -169,7 +169,6 @@ bool Screen::updatePac(char& m)
 	}*/
 	if (pelletsNum == 0)
 	{
-		Congratulations();
 		return 0;
 	}
 	return 1;
@@ -184,13 +183,6 @@ bool Screen::ghostCollision()
 	return flag;
 }
 
-
-void Screen::Congratulations()
-{
-	Text Congrats;
-	Congrats.setString("Congratulations!!! <3 :D");
-	//How to draw??
-}
 
 void Screen::drawAll(RenderWindow& win)
 {

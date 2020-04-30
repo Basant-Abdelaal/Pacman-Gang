@@ -25,6 +25,17 @@ Ghost& Ghost::operator=(Ghost& g) {
 	return *this;
 }
 
+void Ghost::setGhost(string n, int initialR, int initialC, string imagename, bool can) {
+	canMove = can;
+	name = n;
+	curRow = initialR;
+	curColumn = initialC;
+	updatePosition();
+	texture.loadFromFile(imagename);
+	shape.setTexture(&texture);
+	shape.setSize(Vector2f(32, 32));
+}
+
 void Ghost::move()
 {
 	if (canMove)

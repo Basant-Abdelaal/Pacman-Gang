@@ -15,6 +15,7 @@ public:
 	Ghost();
 	Ghost(string n, int initialR, int initialC, string imagename);
 	Ghost& operator=(Ghost&);
+	void setGhost(string n, int initialR, int initialC, string imagename, bool can);
 	void move();
 	void restart();
 	void frightMode();

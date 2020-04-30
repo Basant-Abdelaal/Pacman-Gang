@@ -21,7 +21,6 @@ private:
 	int pelletsNum;
 	Texture bricks, small_p, big_p, space;
 	bool directionOk(Ghost&);
-	void Congratulations();
 public:
 	Screen(Player& pac, Ghost[4]);
 	bool updatePac(char&);
