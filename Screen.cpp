@@ -90,20 +90,20 @@ void Screen::updateGhosts()
 
 bool Screen::directionOk(Ghost& cur)
 {
-	int dir = cur.getDirection();
+	orientation dir = cur.getDirection();
 	int newRow=cur.getRow(), newColumn=cur.getColumn();
 	switch (dir)
 	{
-	case 0:
+	case Up:
 		newRow--;
 		break;
-	case 2:
+	case Down:
 		newRow++;
 		break;
-	case 1:
+	case Right:
 		newColumn++;
 		break;
-	case 3:
+	case Left:
 		newColumn--;
 		break;
 	}

@@ -2,12 +2,14 @@
 #define GHOST
 #include "Object.h"
 #include <cstdlib>   
-#include <ctime>       
+#include <ctime>
+
+enum orientation {Up=0, Right, Down, Left};
 
 class Ghost:public Object
 {
 private:
-	int direction;
+	orientation direction; //current direction of ghost
 	bool canMove;
 public:
 	Ghost();
@@ -16,8 +18,8 @@ public:
 	void move();
 	void restart();
 	void frightMode();
-	int changeDirection();
-	int getDirection();
+	orientation changeDirection();
+	orientation getDirection();
 	void okMove();
 };
 

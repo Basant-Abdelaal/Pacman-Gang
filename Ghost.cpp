@@ -1,14 +1,14 @@
 #include "Ghost.h"
 
 Ghost::Ghost():Object() {
-	direction = 0;
+	direction = Up;
 	srand(time(0));
 	canMove = 0;
 }
 
 Ghost::Ghost(string n, int initialR, int initialC, string imagename):Object(n, initialR, initialC, imagename)
 {
-	direction = 0;
+	direction = Up;
 	srand(time(0));
 	canMove = 0;
 }
@@ -60,14 +60,28 @@ void Ghost::frightMode()
 }
 
 
-int Ghost::changeDirection()
+orientation Ghost::changeDirection()
 {
-	direction= rand() % 4;
+	int n = rand() % 4 + 1;
+	switch (n) {
+	case 0:
+		direction = Up;
+		break;
+	case 1:
+		direction = Right;
+		break;
+	case 2:
+		direction = Down;
+		break;
+	case 3:
+		direction = Left;
+		break;
+	}
 	return direction;
 }
 
 
-int Ghost::getDirection()
+orientation Ghost::getDirection()
 {
 	return direction;
 }
