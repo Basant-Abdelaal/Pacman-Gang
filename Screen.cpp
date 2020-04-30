@@ -55,15 +55,14 @@ Screen::Screen(Player& pac, Ghost G[4])
 				board[i][j].setTexture(&space);
 			}
 		}
-
-	header.setString("Score:    HighScore:     Level:   ");
-	readyText.setString("Ready!");
+	font.loadFromFile("aerial.ttf");
+	scoreHeader.setString("Score:"); scoreHeader.setPosition(Vector2f(64 * 3, 64)); scoreHeader.setCharacterSize(5); scoreHeader.setFillColor(Color::White); scoreHeader.setFont(font);
 	score.setString("0");
 	level.setString("1");
-	header.setScale(Vector2f(400, 32));
+	scoreHeader.setScale(Vector2f(400, 32));
 	score.setScale(Vector2f(32, 32));
 	level.setScale(Vector2f(32, 32));
-	header.setPosition(Vector2f(0, 64));
+	scoreHeader.setPosition(Vector2f(0, 64));
 	score.setPosition(Vector2f(32, 64));
 	level.setPosition(Vector2f(32, 400));
 
@@ -144,15 +143,13 @@ bool Screen::updatePac(char& m)
 		pacman->move(newRow, newColumn);
 		if (pellets[newRow][newColumn] == 1)
 		{
-			pacman->increaseScore(100);
+			pacman->increaseScore(500);
 			score.setString(pacman->getScore());
 			pelletsNum--;
 		}
 		else if (pellets[newRow][newColumn] == 2)
 		{
-			pacman->increaseScore(200);
-			score.setString(pacman->getScore());
-			pelletsNum--;
+			//freight mode
 		}
 		pellets[newRow][newColumn] = 0;
 		board[newRow][newColumn].setTexture(&space);
@@ -189,11 +186,10 @@ void Screen::drawAll(RenderWindow& win)
 	for (int i = 0; i < row; i++)
 		for (int j = 0; j < col; j++)
 			win.draw(board[i][j]);
-	cout << "This is board " << pellets[0][0]<<" "<<endl;
-	cout << pacman->getHorizontal() << " " << pacman->getVertical() << endl;
 	pacman->drawOnWindow(win);
 	for (int i = 0; i < 4; i++)
 		ghosts[i].drawOnWindow(win);
+	win.draw(scoreHeader);
 	/*for (int i=0;i<lives.size();i++)
 	{
 		win.draw(lives[i]);

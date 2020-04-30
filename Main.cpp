@@ -1,13 +1,17 @@
 #include <SFML/Audio.hpp>
 #include"Screen.h"
 
+
 int main()
 {
 	//Music backgroundMusic;
 	//backgroundMusic.openFromFile("Music.mp3");
-	Player pacman("pacman", 11, 8, "pacman.png");
+	Player pacman("pacman", 15, 8, "pacman.png");
 	Ghost ghosts[4];
 	RenderWindow window;
+	Font font;
+	font.loadFromFile("aerial.ttf");
+	Text Ready; Ready.setString("Ready!"); Ready.setPosition(Vector2f(55 + 7 * 32, 62 + 11 * 32)); Ready.setCharacterSize(28); Ready.setFillColor(Color::White); Ready.setFont(font);
 	Text FinalText; FinalText.setScale(Vector2f(600, 100)); FinalText.setPosition(Vector2f(64, 64 + 8 * 32));
 	window.create(VideoMode(800, 800), "Maze");
 
@@ -19,12 +23,24 @@ int main()
 	Screen myScreen(pacman, ghosts);
 
 	Event e;
-	for (int i = 0; i < 4; i++)
-		ghosts[i].okMove();
 
 	Clock timer;
 	char movement = ' ';
-	bool gameOn = true;//If the player didn't win or lose yet
+
+	window.clear();
+	myScreen.drawAll(window);
+	window.draw(Ready);
+	window.display();
+
+	bool gameOn = false;//If the game is working
+
+	while (!gameOn)
+		while (window.pollEvent(e))
+			if (e.type == Event::Closed)
+				window.close();
+			else if (e.type == Event::KeyPressed)
+				if (e.key.code == Keyboard::Space)
+					gameOn = true;
 
 	while (window.isOpen() && gameOn)
 	{

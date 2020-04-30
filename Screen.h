@@ -15,7 +15,7 @@ private:
 	Player *pacman;
 	Ghost* ghosts;
 	Font font;
-	Text header, readyText, score, level;
+	Text scoreHeader, highScoreHeader, levelHeader, score, level;
 	//vector<RectangleShape> lives;
 	Texture live;
 	int pelletsNum;
