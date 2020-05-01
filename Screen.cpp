@@ -129,9 +129,9 @@ bool Screen::updatePac(char& m)
 	}
 	if (newColumn < 0 )
 	{
-		newColumn = 21;
+		newColumn = 17;
 	}
-	else if (newColumn > 21)
+	else if (newColumn > 17)
 	{
 		newColumn = 0;
 	}
