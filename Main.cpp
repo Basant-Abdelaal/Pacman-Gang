@@ -1,6 +1,8 @@
 #include <SFML/Audio.hpp>
 #include"Screen.h"
 
+bool runLevelOne(Screen&, Player&, RenderWindow&, Event&, char&, Clock&);
+Text FinalText;
 
 int main()
 {
@@ -12,7 +14,7 @@ int main()
 	Font font;
 	font.loadFromFile("aerial.ttf");
 	Text Ready; Ready.setString("Ready!"); Ready.setPosition(Vector2f(55 + 7 * 32, 62 + 11 * 32)); Ready.setCharacterSize(28); Ready.setFillColor(Color::White); Ready.setFont(font);
-	Text FinalText; FinalText.setScale(Vector2f(600, 100)); FinalText.setPosition(Vector2f(64, 64 + 8 * 32));
+	FinalText.setCharacterSize(60); FinalText.setPosition(Vector2f(70, 70 + 10 * 32)); FinalText.setFillColor(Color::White); FinalText.setFont(font);
 	window.create(VideoMode(800, 800), "Maze");
 
 	ghosts[0].setGhost("blinky", 7, 8, "blinky.png", true);//setting Blinky above the ghost house and prepared to move at the beginning of the game
@@ -34,75 +36,83 @@ int main()
 
 	bool gameOn = false;//If the game is working
 
-	while (!gameOn)
-		while (window.pollEvent(e))
-			if (e.type == Event::Closed)
-				window.close();
-			else if (e.type == Event::KeyPressed)
-				if (e.key.code == Keyboard::Space)
-					gameOn = true;
+	
 
-	while (window.isOpen() && gameOn)
+	while (window.isOpen())
 	{
-		while (window.pollEvent(e))
-		{
-			if (e.type == Event::Closed)
-				window.close();
-			else if (e.type == Event::KeyPressed)
-			{
+		while (!gameOn)
+			while (window.pollEvent(e))
+				if (e.type == Event::Closed)
+					window.close();
+				else if (e.type == Event::KeyPressed)
+					if (e.key.code == Keyboard::Space)
+						gameOn = true;
 
-				switch (e.key.code)
-				{
-				case Keyboard::Up:
-					movement = 'U';
-					break;
-				case Keyboard::Down:
-					movement = 'D';
-					break;
-				case Keyboard::Right:
-					movement = 'R';
-					break;
-				case Keyboard::Left:
-					movement = 'L';
-					break;
-				}
-			}
+		while (gameOn) {
+			gameOn = runLevelOne(myScreen, pacman, window, e, movement, timer);
+			window.clear();
+			myScreen.drawAll(window);
+			if (!gameOn)
+				window.draw(FinalText);
+			window.display();
 		}
-		if (timer.getElapsedTime().asMilliseconds() > 200) {
-			if (!myScreen.updatePac(movement))
-			{
-				FinalText.setString("Congratulations");
-				gameOn = false;
-			}
-			if (myScreen.ghostCollision())
-			{
-				if (!pacman.loseLive())
-				{
-					FinalText.setString("GameOver!!");
-					gameOn = false;
-				}
-				movement = ' ';
-			}
-
-			myScreen.updateGhosts();
-			if (myScreen.ghostCollision())
-			{
-				if (!pacman.loseLive())
-				{
-					FinalText.setString("GameOver!!");
-					gameOn = false;
-				}
-				movement = ' ';
-			}
-			timer.restart();
-		}
-		
-		window.clear();
-		myScreen.drawAll(window);
-		if (!gameOn)
-			window.draw(FinalText);
-		window.display();
 	}
 
 	return 0;
+}
+
+bool runLevelOne(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, char& movement, Clock& timer) {
+	while (window.pollEvent(e))
+	{
+		if (e.type == Event::Closed)
+			window.close();
+		else if (e.type == Event::KeyPressed)
+		{
+
+			switch (e.key.code)
+			{
+			case Keyboard::Up:
+				movement = 'U';
+				break;
+			case Keyboard::Down:
+				movement = 'D';
+				break;
+			case Keyboard::Right:
+				movement = 'R';
+				break;
+			case Keyboard::Left:
+				movement = 'L';
+				break;
+			}
+		}
+	}
+	if (timer.getElapsedTime().asMilliseconds() > 200) {
+		if (!myScreen.updatePac(movement))
+		{
+			FinalText.setString("Congratulations");
+			return false;
+		}
+		if (myScreen.ghostCollision())
+		{
+			if (!pacman.loseLive())
+			{
+				FinalText.setString("GameOver!!");
+				return false;
+			}
+			movement = ' ';
+		}
+
+		myScreen.updateGhosts();
+		if (myScreen.ghostCollision())
+		{
+			if (!pacman.loseLive())
+			{
+				FinalText.setString("GameOver!!");
+				return false;
+			}
+			movement = ' ';
+		}
+		timer.restart();
+	}
+	return true;
 }

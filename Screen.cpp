@@ -56,15 +56,12 @@ Screen::Screen(Player& pac, Ghost G[4])
 			}
 		}
 	font.loadFromFile("aerial.ttf");
-	scoreHeader.setString("Score:"); scoreHeader.setPosition(Vector2f(64 * 3, 64)); scoreHeader.setCharacterSize(5); scoreHeader.setFillColor(Color::White); scoreHeader.setFont(font);
-	score.setString("0");
-	level.setString("1");
-	scoreHeader.setScale(Vector2f(400, 32));
-	score.setScale(Vector2f(32, 32));
-	level.setScale(Vector2f(32, 32));
-	scoreHeader.setPosition(Vector2f(0, 64));
-	score.setPosition(Vector2f(32, 64));
-	level.setPosition(Vector2f(32, 400));
+
+	scoreHeader.setString("Score:"); scoreHeader.setPosition(Vector2f(0, 0)); scoreHeader.setCharacterSize(27); scoreHeader.setFillColor(Color::White); scoreHeader.setFont(font);
+	score.setString("0"); score.setPosition(Vector2f(0, 32)); score.setCharacterSize(27); score.setFillColor(Color::White); score.setFont(font);
+	levelHeader.setString("Level:"); levelHeader.setPosition(Vector2f(32 * 15, 0)); levelHeader.setCharacterSize(27); levelHeader.setFillColor(Color::White); levelHeader.setFont(font);
+	level.setString("1"); level.setPosition(Vector2f(32*15, 32)); level.setCharacterSize(27); level.setFillColor(Color::White); level.setFont(font);
+	highScoreHeader.setString("HighScore:"); highScoreHeader.setPosition(Vector2f(32 * 6, 0)); highScoreHeader.setCharacterSize(27); highScoreHeader.setFillColor(Color::White); highScoreHeader.setFont(font);
 
 	/*live.loadFromFile("live.png");
 	for (int i = 0; i < 3; i++)
@@ -150,6 +147,7 @@ bool Screen::updatePac(char& m)
 		else if (pellets[newRow][newColumn] == 2)
 		{
 			//freight mode
+			pelletsNum--;
 		}
 		pellets[newRow][newColumn] = 0;
 		board[newRow][newColumn].setTexture(&space);
@@ -190,6 +188,10 @@ void Screen::drawAll(RenderWindow& win)
 	for (int i = 0; i < 4; i++)
 		ghosts[i].drawOnWindow(win);
 	win.draw(scoreHeader);
+	win.draw(score);
+	win.draw(level);
+	win.draw(levelHeader);
+	win.draw(highScoreHeader);
 	/*for (int i=0;i<lives.size();i++)
 	{
 		win.draw(lives[i]);
