@@ -29,6 +29,7 @@ public:
 	void updatePosition();
 	void drawOnWindow(RenderWindow& win);
 	void move() {};
+	void restart();
 };
 
 #endif

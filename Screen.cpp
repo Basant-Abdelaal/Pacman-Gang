@@ -4,16 +4,7 @@ Screen::Screen(Player& pac, Ghost G[4])
 {
 	pacman = & pac;
 	ghosts = G;
-	ifstream g,p; //ghost: g ,, pellets: p
-	g.open("gpath.txt");
-	if (g.is_open())
-	{
-		for (int i = 0; i < row; i++)
-			for (int j = 0; j < col; j++)
-				if (!g.eof())
-					g >> gpath[i][j];
-	}
-	g.close();
+	ifstream p;
 	p.open("pellets.txt");
 	if (p.is_open())
 	{
@@ -55,12 +46,13 @@ Screen::Screen(Player& pac, Ghost G[4])
 				board[i][j].setTexture(&space);
 			}
 		}
+	level = 1;
 	font.loadFromFile("aerial.ttf");
 
 	scoreHeader.setString("Score:"); scoreHeader.setPosition(Vector2f(0, 0)); scoreHeader.setCharacterSize(27); scoreHeader.setFillColor(Color::White); scoreHeader.setFont(font);
 	score.setString("0"); score.setPosition(Vector2f(0, 32)); score.setCharacterSize(27); score.setFillColor(Color::White); score.setFont(font);
 	levelHeader.setString("Level:"); levelHeader.setPosition(Vector2f(32 * 15, 0)); levelHeader.setCharacterSize(27); levelHeader.setFillColor(Color::White); levelHeader.setFont(font);
-	level.setString("1"); level.setPosition(Vector2f(32*15, 32)); level.setCharacterSize(27); level.setFillColor(Color::White); level.setFont(font);
+	levelText.setString(to_string(level)); levelText.setPosition(Vector2f(32*15, 32)); levelText.setCharacterSize(27); levelText.setFillColor(Color::White); levelText.setFont(font);
 	highScoreHeader.setString("HighScore:"); highScoreHeader.setPosition(Vector2f(32 * 6, 0)); highScoreHeader.setCharacterSize(27); highScoreHeader.setFillColor(Color::White); highScoreHeader.setFont(font);
 
 	/*live.loadFromFile("live.png");
@@ -107,7 +99,7 @@ bool Screen::updatePac(char& m)
 	{
 		newColumn = 0;
 	}
-	else if (gpath[newRow][newColumn] != -1)
+	else if (pellets[newRow][newColumn] != -1)
 	{
 		pacman->move(newRow, newColumn);
 		if (pellets[newRow][newColumn] == 1)
@@ -161,11 +153,72 @@ void Screen::drawAll(RenderWindow& win)
 		ghosts[i].drawOnWindow(win);
 	win.draw(scoreHeader);
 	win.draw(score);
-	win.draw(level);
+	win.draw(levelText);
 	win.draw(levelHeader);
 	win.draw(highScoreHeader);
 	/*for (int i=0;i<lives.size();i++)
 	{
 		win.draw(lives[i]);
 	}*/
+}
+
+void Screen::levelUp() {
+	level++;
+	levelText.setString(to_string(level));
+
+	ifstream p;
+	p.open("pellets.txt");
+	if (p.is_open())
+	{
+		for (int i = 0; i < row; i++)
+			for (int j = 0; j < col; j++)
+				if (!p.eof())
+					p >> pellets[i][j];
+	}
+	p.close();
+
+	switch (level) {
+	case 2:
+		bricks.loadFromFile("bricks2.png");
+		break;
+	case3:
+		bricks.loadFromFile("bricks3.png");
+		break;
+	case 4:
+
+		break;
+	default:
+
+		break;
+	}
+	for (int i = 0; i < row; i++)
+		for (int j = 0; j < col; j++)
+		{
+			board[i][j].setPosition(64 + 32 * j, 64 + 32 * i);
+			board[i][j].setSize(Vector2f(32, 32));
+			if (pellets[i][j] == -1)   //Bricks
+			{
+				board[i][j].setTexture(&bricks);
+			}
+			else if (pellets[i][j] == 1)   //Pellets small
+			{
+				board[i][j].setTexture(&small_p);
+				pelletsNum++;
+			}
+			else if (pellets[i][j] == 2)   //Pellets big
+			{
+				board[i][j].setTexture(&big_p);
+				pelletsNum++;
+			}
+			else  //space
+			{
+				board[i][j].setTexture(&space);
+			}
+		}
+
+	pacman->restart();
+	for (int i = 0; i < 4; i++)
+		(ghosts+i)->restart();
+
+	
 }

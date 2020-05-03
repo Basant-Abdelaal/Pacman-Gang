@@ -110,11 +110,6 @@ void Ghost::move(int node)
 	}
 }
 
-void Ghost::restart() {
-	curColumn = initialColumn;
-	curRow = initialRow;
-	updatePosition();
-}
 
 void Ghost::frightMode()
 {

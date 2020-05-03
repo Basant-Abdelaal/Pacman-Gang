@@ -54,3 +54,9 @@ void Object::updatePosition()
 	curVertical = 64 + curRow * 32;
 	shape.setPosition(Vector2f(curHorizontal, curVertical));
 }
+
+void Object::restart() {
+	curColumn = initialColumn;
+	curRow = initialRow;
+	updatePosition();
+}

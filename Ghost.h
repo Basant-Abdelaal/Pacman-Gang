@@ -23,7 +23,6 @@ public:
 	Ghost& operator=(Ghost&);
 	void setGhost(string n, int initialR, int initialC, string imagename, bool can);
 	void move(int node);
-	void restart();
 	void frightMode();
 	int getDirection(int  x, int y);
 	void okMove();

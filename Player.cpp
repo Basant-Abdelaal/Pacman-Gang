@@ -59,3 +59,17 @@ bool Player::checkLiveBonus()
 	}
 	return false;
 }
+
+void Player::restart() {
+	curColumn = initialColumn;
+	curRow = initialRow;
+	updatePosition();
+	score = 0;
+	lifeIncrements = 0;
+	lives = 3;
+}
+
+void Player::setImage(string s) {
+	texture.loadFromFile(s);
+	shape.setTexture(&texture);
+}

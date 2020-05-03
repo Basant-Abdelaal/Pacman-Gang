@@ -17,6 +17,8 @@ public:
 	void move(int, int);
 	void increaseScore(int);
 	bool checkLiveBonus();
+	void restart();
+	void setImage(string);
 };
 
 #endif

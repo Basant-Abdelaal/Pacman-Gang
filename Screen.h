@@ -9,13 +9,13 @@
 class Screen
 {
 private:
-	int gpath[row][col];
+	int level;
 	int pellets[row][col];
 	RectangleShape board[row][col];
 	Player *pacman;
 	Ghost* ghosts;
 	Font font;
-	Text scoreHeader, highScoreHeader, levelHeader, score, level;
+	Text scoreHeader, highScoreHeader, levelHeader, score, levelText;
 	//vector<RectangleShape> lives;
 	Texture live;
 	int pelletsNum;
@@ -27,6 +27,8 @@ public:
 	void updateGhosts();
 	bool ghostCollision();
 	void drawAll(RenderWindow&);
+	void levelUp();
+	int getLevel() { return level; }
 };
 
 

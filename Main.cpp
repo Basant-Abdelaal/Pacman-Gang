@@ -1,10 +1,11 @@
 #include <SFML/Audio.hpp>
 #include"Screen.h"
 
-bool runLevelOne(Screen&, Player&, RenderWindow&, Event&, char&, Clock&);
+bool runLevelOne(Screen&, Player&, RenderWindow&, Event&, char&);
 Text FinalText;
 Player pacman("pacman", 15, 8, "pacman.png");
 Ghost ghosts[4];
+Clock timerP, timerG;
 
 int main()
 {
@@ -16,6 +17,7 @@ int main()
 	font.loadFromFile("aerial.ttf");
 	Text Ready; Ready.setString("Ready!"); Ready.setPosition(Vector2f(55 + 7 * 32, 62 + 11 * 32)); Ready.setCharacterSize(28); Ready.setFillColor(Color::White); Ready.setFont(font);
 	FinalText.setCharacterSize(60); FinalText.setPosition(Vector2f(70, 70 + 10 * 32)); FinalText.setFillColor(Color::White); FinalText.setFont(font);
+	Text choosePlayer;  choosePlayer.setString("1) Pacman OR 2) Ms Pacman ?"); choosePlayer.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32)); choosePlayer.setCharacterSize(23); choosePlayer.setFillColor(Color::White); choosePlayer.setFont(font);
 	window.create(VideoMode(800, 800), "Maze");
 
 	ghosts[0].setGhost("blinky", 7, 8, "blinky.png", true);//setting Blinky above the ghost house and prepared to move at the beginning of the game
@@ -27,34 +29,49 @@ int main()
 
 	Event e;
 
-	Clock timer;
 	char movement = ' ';
 
-	window.clear();
-	myScreen.drawAll(window);
-	window.draw(Ready);
-	window.display();
-
 	bool gameOn = false;//If the game is working
-
+	bool playerChosen = false;//If the player has chosen which avatar to play with
 	
-
 	while (window.isOpen())
 	{
-		while (!gameOn)
+		while (!gameOn) {
 			while (window.pollEvent(e))
 				if (e.type == Event::Closed)
 					window.close();
 				else if (e.type == Event::KeyPressed)
-					if (e.key.code == Keyboard::Space)
+					if (!playerChosen) {
+						if (e.key.code == Keyboard::Num1)
+						{
+							pacman.setImage("pacman.png");
+							playerChosen = true;
+						}
+						else if (e.key.code == Keyboard::Num2)
+						{
+							pacman.setImage("mspacman.png");
+							playerChosen = true;
+						}
+					}
+					else if (e.key.code == Keyboard::Space)
 						gameOn = true;
-
-		while (gameOn) {
-			gameOn = runLevelOne(myScreen, pacman, window, e, movement, timer);
 			window.clear();
 			myScreen.drawAll(window);
-			if (!gameOn)
+			if (!playerChosen)
+				window.draw(choosePlayer);
+			else
+				window.draw(Ready);
+			window.display();
+		}
+
+		while (gameOn) {
+			gameOn = runLevelOne(myScreen, pacman, window, e, movement);
+			window.clear();
+			myScreen.drawAll(window);
+			if (!gameOn) {
 				window.draw(FinalText);
+				playerChosen = false;
+			}
 			window.display();
 		}
 	}
@@ -62,7 +79,7 @@ int main()
 	return 0;
 }
 
-bool runLevelOne(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, char& movement, Clock& timer) {
+bool runLevelOne(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, char& movement) {
 	while (window.pollEvent(e))
 	{
 		if (e.type == Event::Closed)
@@ -87,10 +104,11 @@ bool runLevelOne(Screen& myScreen, Player& pacman, RenderWindow& window, Event& 
 			}
 		}
 	}
-	if (timer.getElapsedTime().asMilliseconds() > 200) {
+	if (timerP.getElapsedTime().asMilliseconds() > 200) {
 		if (!myScreen.updatePac(movement))
 		{
 			FinalText.setString("Congratulations");
+			myScreen.levelUp();
 			return false;
 		}
 		if (myScreen.ghostCollision())
@@ -103,10 +121,14 @@ bool runLevelOne(Screen& myScreen, Player& pacman, RenderWindow& window, Event& 
 			movement = ' ';
 		}
 
+		timerP.restart();
+	}
+	if (timerG.getElapsedTime().asMilliseconds() > 300-50*myScreen.getLevel()) {
+
 		myScreen.updateGhosts();
 		if (myScreen.ghostCollision())
 		{
-			
+
 			if (!pacman.loseLive())
 			{
 				FinalText.setString("GameOver!!");
@@ -116,7 +138,8 @@ bool runLevelOne(Screen& myScreen, Player& pacman, RenderWindow& window, Event& 
 				ghosts[i].restart();
 			movement = ' ';
 		}
-		timer.restart();
+		timerG.restart();
 	}
+
 	return true;
 }
