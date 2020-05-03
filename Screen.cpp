@@ -80,30 +80,6 @@ void Screen::updateGhosts()
 	}
 }
 
-/*bool Screen::directionOk(Ghost& cur)
-{
-	orientation dir = cur.getDirection();
-	int newRow=cur.getRow(), newColumn=cur.getColumn();
-	switch (dir)
-	{
-	case Up:
-		newRow--;
-		break;
-	case Down:
-		newRow++;
-		break;
-	case Right:
-		newColumn++;
-		break;
-	case Left:
-		newColumn--;
-		break;
-	}
-	if (gpath[newRow][newColumn] == -1)
-		return 0;
-	else
-		return 1;
-}*/
 
 bool Screen::updatePac(char& m)
 {

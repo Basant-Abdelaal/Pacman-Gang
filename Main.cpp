@@ -3,13 +3,14 @@
 
 bool runLevelOne(Screen&, Player&, RenderWindow&, Event&, char&, Clock&);
 Text FinalText;
+Player pacman("pacman", 15, 8, "pacman.png");
+Ghost ghosts[4];
 
 int main()
 {
 	//Music backgroundMusic;
 	//backgroundMusic.openFromFile("Music.mp3");
-	Player pacman("pacman", 15, 8, "pacman.png");
-	Ghost ghosts[4];
+
 	RenderWindow window;
 	Font font;
 	font.loadFromFile("aerial.ttf");
@@ -105,11 +106,14 @@ bool runLevelOne(Screen& myScreen, Player& pacman, RenderWindow& window, Event& 
 		myScreen.updateGhosts();
 		if (myScreen.ghostCollision())
 		{
+			
 			if (!pacman.loseLive())
 			{
 				FinalText.setString("GameOver!!");
 				return false;
 			}
+			for (int i = 0; i < 4; i++)
+				ghosts[i].restart();
 			movement = ' ';
 		}
 		timer.restart();

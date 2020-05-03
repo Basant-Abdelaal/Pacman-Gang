@@ -2,7 +2,6 @@
 
 Ghost::Ghost():Object() {
 	int dx[4] = { 1,-1,0,0 }, dy[4] = { 0,0,1,-1 };
-	direction = Up;
 	srand(time(0));
 	canMove = 0;
 	ifstream g;
@@ -31,13 +30,14 @@ Ghost::Ghost():Object() {
 				}
 			}
 		}
+	initialRow = 0;
+	initialColumn = 0;
 	memset(cost, -1, sizeof cost);
 }
 
 Ghost::Ghost(string n, int initialR, int initialC, string imagename):Object(n, initialR, initialC, imagename)
 {
 	int dx[4] = { 1,-1,0,0 }, dy[4] = { 0,0,1,-1 };
-	direction = Up;
 	srand(time(0));
 	canMove = 0;
 	ifstream g;
@@ -70,7 +70,6 @@ Ghost::Ghost(string n, int initialR, int initialC, string imagename):Object(n, i
 }
 
 Ghost& Ghost::operator=(Ghost& g) {
-	direction = g.direction;
 	canMove = g.canMove;
 	name = g.name;
 	curRow = g.curRow;
@@ -84,6 +83,8 @@ Ghost& Ghost::operator=(Ghost& g) {
 void Ghost::setGhost(string n, int initialR, int initialC, string imagename, bool can) {
 	canMove = can;
 	name = n;
+	initialRow = initialR;
+	initialColumn = initialC;
 	curRow = initialR;
 	curColumn = initialC;
 	updatePosition();
@@ -121,25 +122,6 @@ void Ghost::frightMode()
 }
 
 
-orientation Ghost::changeDirection()
-{
-	int n = rand() % 4 + 1;
-	switch (n) {
-	case 0:
-		direction = Up;
-		break;
-	case 1:
-		direction = Right;
-		break;
-	case 2:
-		direction = Down;
-		break;
-	case 3:
-		direction = Left;
-		break;
-	}
-	return direction;
-}
 
 
 int Ghost::getDirection(int  x, int y)
@@ -182,3 +164,4 @@ void Ghost::okMove()
 {
 	canMove = 1;
 }
+
