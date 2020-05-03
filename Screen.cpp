@@ -13,7 +13,7 @@ Screen::Screen(Player& pac, Ghost G[4])
 				if (!g.eof())
 					g >> gpath[i][j];
 	}
-	p.close();
+	g.close();
 	p.open("pellets.txt");
 	if (p.is_open())
 	{
@@ -76,15 +76,11 @@ Screen::Screen(Player& pac, Ghost G[4])
 void Screen::updateGhosts()
 {
 	for (int i = 0; i < 4; i++) {
-		while (!directionOk(ghosts[i]))
-		{
-			ghosts[i].changeDirection();
-		}
-		ghosts[i].move();
+		ghosts[i].move(ghosts[i].getDirection(pacman->getRow(),pacman->getColumn()));
 	}
 }
 
-bool Screen::directionOk(Ghost& cur)
+/*bool Screen::directionOk(Ghost& cur)
 {
 	orientation dir = cur.getDirection();
 	int newRow=cur.getRow(), newColumn=cur.getColumn();
@@ -107,7 +103,7 @@ bool Screen::directionOk(Ghost& cur)
 		return 0;
 	else
 		return 1;
-}
+}*/
 
 bool Screen::updatePac(char& m)
 {
