@@ -91,13 +91,15 @@ bool Screen::updatePac(char& m)
 		newColumn--;
 		break;
 	}
-	if (newColumn < 0 )
+	if (newColumn == 0 && newRow==9)
 	{
-		newColumn = 17;
+		newColumn = 16;
+		pacman->move(newRow, 16);
 	}
-	else if (newColumn > 17)
+	else if (newColumn == 16)
 	{
 		newColumn = 0;
+		pacman->move(newRow, 0);
 	}
 	else if (pellets[newRow][newColumn] != -1)
 	{
