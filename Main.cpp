@@ -9,10 +9,13 @@ Clock timerP, timerG;
 
 int main()
 {
-	//Music backgroundMusic;
-	//backgroundMusic.openFromFile("Music.mp3");
 
 	RenderWindow window;
+	SoundBuffer buffer;
+	buffer.loadFromFile("pacman_beginning.wav");
+	Sound sound;
+	sound.setBuffer(buffer);
+	sound.play();
 	Font font;
 	font.loadFromFile("aerial.ttf");
 	Text Ready; Ready.setString("Ready!"); Ready.setPosition(Vector2f(55 + 7 * 32, 62 + 11 * 32)); Ready.setCharacterSize(28); Ready.setFillColor(Color::White); Ready.setFont(font);
