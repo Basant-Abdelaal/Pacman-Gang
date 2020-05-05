@@ -18,6 +18,9 @@ protected:
 	int initialColumn;
 	RectangleShape shape;
 	Texture texture;
+	vector<Texture> snapshot;
+	Clock animationTimer;
+	int snapshotIndex;// Index to point to the next snapshot
 public:
 	Object();
 	Object(string n, int initialR, int initialC, string imagename);
@@ -29,6 +32,8 @@ public:
 	void updatePosition();
 	void drawOnWindow(RenderWindow& win);
 	void move() {};
+	void addSnapshots(string, string, string);
+	void updateAnimation();
 	void restart();
 };
 

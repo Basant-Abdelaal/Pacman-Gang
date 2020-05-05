@@ -92,13 +92,7 @@ void Ghost::setGhost(string n, int initialR, int initialC, string imagename1, st
 	shape.setTexture(&texture);
 	shape.setSize(Vector2f(32, 32));
 
-	snapshot.resize(4);
-	snapshot[0].loadFromFile(imagename1);
-	snapshot[1].loadFromFile(imagename2);
-	snapshot[2].loadFromFile(imagename3);
-	snapshot[3].loadFromFile(imagename2);
-
-	snapshotIndex = 0;
+	this->addSnapshots(imagename1, imagename2, imagename3);
 }
 
 void Ghost::move(int node)
@@ -122,14 +116,6 @@ void Ghost::move(int node)
 void Ghost::frightMode()
 {
 	shape.setFillColor(Color::Blue);
-}
-
-void Ghost::updateAnimation() {
-	if (animationTimer.getElapsedTime().asMilliseconds() > 250) {
-		snapshotIndex = (snapshotIndex + 1) % 4;
-		texture = snapshot[snapshotIndex];
-		animationTimer.restart();
-	}
 }
 
 

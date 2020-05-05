@@ -30,6 +30,8 @@ int main()
 	ghosts[2].setGhost("inky", 9, 7, "inky.png", "inky2.png", "inky3.png", false);//setting Inky in the left of the ghost house and wouldn't start moving at the beginning of the game
 	ghosts[3].setGhost("clyde", 9, 9, "clyde.png", "clyde2.png", "clyde3.png", false);//setting Clyde in the left of the ghost house and wouldn't start moving at the beginning of the game
 
+	pacman.addSnapshots("pacman.png", "pacman2.png", "pacman3.png");
+
 	liveTexture.loadFromFile("pacman.png");
 	lives.resize(3);
 	for (int i = 0; i < 3; i++)
@@ -61,11 +63,13 @@ int main()
 						if (e.key.code == Keyboard::Numpad1 || e.key.code == Keyboard::Num1)
 						{
 							pacman.setImage("pacman.png");
+							pacman.addSnapshots("pacman.png", "pacman2.png", "pacman3.png");
 							playerChosen = true;
 						}
 						else if (e.key.code == Keyboard::Num2 || e.key.code == Keyboard::Numpad2)
 						{
 							pacman.setImage("mspacman.png");
+							pacman.addSnapshots("mspacman.png", "mspacman2.png", "mspacman3.png");
 							playerChosen = true;
 						}
 					}
@@ -87,8 +91,11 @@ int main()
 						gameOn = true;
 			for (int i = 0; i < 4; i++)
 				ghosts[i].updateAnimation();
+			pacman.updateAnimation();
+
 			window.clear();
 			myScreen.drawAll(window);
+
 			if (!playerChosen)
 				window.draw(choosePlayer);
 			else if (!isLevelChosen)
@@ -100,7 +107,7 @@ int main()
 
 		while (gameOn) {
 			gameOn = runLevel(myScreen, pacman, window, e, movement);
-
+			pacman.updateAnimation();
 			window.clear();
 			myScreen.drawAll(window);
 
@@ -108,13 +115,13 @@ int main()
 			if (!gameOn) {
 				window.draw(FinalText);
 				playerChosen = false;
-				lives.resize(3);
 				isLevelChosen = false;
+				pacman.restart();
+				for (int i = 0; i < 4; i++)
+					ghosts[i].restart();
 			}
 			for (int i = 0; i < lives.size(); i++)
-			{
 				window.draw(lives[i]);
-			}
 			window.display();
 		}
 	}
