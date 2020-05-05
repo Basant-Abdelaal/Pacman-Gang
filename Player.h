@@ -12,7 +12,7 @@ public:
 	Player(string n, int initialR, int initialC, string imagename);
 	string getScore();
 	int getLives();
-	void increaseLives();
+	//void increaseLives();
 	bool loseLive();
 	void move(int, int);
 	void increaseScore(int);

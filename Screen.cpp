@@ -52,17 +52,34 @@ Screen::Screen(Player& pac, Ghost G[4])
 	scoreHeader.setString("Score:"); scoreHeader.setPosition(Vector2f(0, 0)); scoreHeader.setCharacterSize(27); scoreHeader.setFillColor(Color::White); scoreHeader.setFont(font);
 	score.setString("0"); score.setPosition(Vector2f(0, 32)); score.setCharacterSize(27); score.setFillColor(Color::White); score.setFont(font);
 	levelHeader.setString("Level:"); levelHeader.setPosition(Vector2f(32 * 15, 0)); levelHeader.setCharacterSize(27); levelHeader.setFillColor(Color::White); levelHeader.setFont(font);
-	levelText.setString(to_string(level)); levelText.setPosition(Vector2f(32 * 15, 32)); levelText.setCharacterSize(27); levelText.setFillColor(Color::White); levelText.setFont(font);
+	levelText.setString("Easy"); levelText.setPosition(Vector2f(32 * 15, 32)); levelText.setCharacterSize(27); levelText.setFillColor(Color::White); levelText.setFont(font);
 	highScoreHeader.setString("HighScore:"); highScoreHeader.setPosition(Vector2f(32 * 6, 0)); highScoreHeader.setCharacterSize(27); highScoreHeader.setFillColor(Color::White); highScoreHeader.setFont(font);
 
-	/*live.loadFromFile("live.png");
-	for (int i = 0; i < 3; i++)
-	{
-		lives[i].setPosition(64 + 32 * i, 64 + 32 * 22);
-		lives[i].setScale(Vector2f(32, 32));
-		lives[i].setTexture(&live);
-	}*/
 
+	fruit1.loadFromFile("fruit1.png");
+	fruit2.loadFromFile("fruit2.png");
+	fruit3.loadFromFile("fruit3.png");
+	fruit4.loadFromFile("fruit4.png");
+	fruit5.loadFromFile("fruit5.png");
+	fruit6.loadFromFile("fruit6.png");
+
+	fruit.resize(6);
+	for (int i = 0; i < 6; i++)
+		fruit[i].setSize(Vector2f(32, 32));
+	fruit[0].setPosition(64 + 32 * 5, 64 + 32 * 7);
+	fruit[0].setTexture(&fruit1);
+	fruit[1].setPosition(64 + 32 * 7, 64 + 32 * 11);
+	fruit[1].setTexture(&fruit2);
+	fruit[2].setPosition(64 + 32, 64 + 32 * 9);
+	fruit[2].setTexture(&fruit3);
+	fruit[3].setPosition(64 + 32*15, 64 + 32 * 9);
+	fruit[3].setTexture(&fruit4);
+	fruit[4].setPosition(64 + 32 * 5, 64 + 32 * 7);
+	fruit[4].setTexture(&fruit5);
+	fruit[5].setPosition(64 + 32 * 7, 64 + 32 * 11);
+	fruit[5].setTexture(&fruit6);
+
+	fruitOrder = 0;
 }
 
 void Screen::updateGhosts()
@@ -91,12 +108,12 @@ bool Screen::updatePac(char& m)
 		newColumn--;
 		break;
 	}
-	if (newColumn == 0 && newRow == 9)
+	if (newColumn == -1 && newRow == 9)
 	{
 		newColumn = 16;
 		pacman->move(newRow, 16);
 	}
-	if (newColumn == 16 && newRow == 9)
+	else if (newColumn == 17 && newRow == 9)
 	{
 		newColumn = 0;
 		pacman->move(newRow, 0);
@@ -106,10 +123,10 @@ bool Screen::updatePac(char& m)
 		pacman->move(newRow, newColumn);
 		if (pellets[newRow][newColumn] == 1)
 		{
-			eat.loadFromFile("pacman_chomp.wav");
+			/*eat.loadFromFile("pacman_chomp.wav");
 			s.setBuffer(eat);
-			s.play();
-			pacman->increaseScore(500);
+			s.play();*/
+			pacman->increaseScore(250);
 			score.setString(pacman->getScore());
 			pelletsNum--;
 		}
@@ -121,20 +138,21 @@ bool Screen::updatePac(char& m)
 		pellets[newRow][newColumn] = 0;
 		board[newRow][newColumn].setTexture(&space);
 	}
-	/*if (lives.size() != pacman->getLives())
-	{
-		lives.resize(pacman->getLives());
-		for (int i = 0; i < pacman->getLives(); i++)
-		{
-			lives[i].setPosition(64 + 32 * i, 64 + 32 * 22);
-			lives[i].setScale(Vector2f(32, 32));
-			lives[i].setTexture(&live);
+
+	if (fruitAdded) {
+		if (pacman->getShape().getGlobalBounds().intersects(fruit[fruitOrder].getGlobalBounds())) {
+			fruitAdded = false;
+			pacman->increaseScore(500*(fruitOrder+1));
+			score.setString(pacman->getScore());
+			fruitOrder = (fruitOrder + 1) % fruit.size();
 		}
-	}*/
+	}
+
 	if (pelletsNum == 0)
 	{
 		return 0;
 	}
+
 	return 1;
 }
 
@@ -153,23 +171,26 @@ void Screen::drawAll(RenderWindow& win)
 	for (int i = 0; i < row; i++)
 		for (int j = 0; j < col; j++)
 			win.draw(board[i][j]);
+
+	if (fruitAdded) {
+		win.draw(fruit[fruitOrder]);
+	}
+
 	pacman->drawOnWindow(win);
+
 	for (int i = 0; i < 4; i++)
 		ghosts[i].drawOnWindow(win);
+
 	win.draw(scoreHeader);
 	win.draw(score);
 	win.draw(levelText);
 	win.draw(levelHeader);
 	win.draw(highScoreHeader);
-	/*for (int i=0;i<lives.size();i++)
-	{
-		win.draw(lives[i]);
-	}*/
+	
 }
 
-void Screen::levelUp() {
-	level++;
-	levelText.setString(to_string(level));
+void Screen::setLevel(int n) {
+	level = n;
 
 	ifstream p;
 	p.open("pellets.txt");
@@ -182,18 +203,20 @@ void Screen::levelUp() {
 	}
 	p.close();
 
+	pelletsNum = 0;
+
 	switch (level) {
+	case 1:
+		bricks.loadFromFile("bricks1.png");
+		levelText.setString("Easy");
+		break;
 	case 2:
 		bricks.loadFromFile("bricks2.png");
+		levelText.setString("Medium");
 		break;
-	case3:
+	case 3:
 		bricks.loadFromFile("bricks3.png");
-		break;
-	case 4:
-
-		break;
-	default:
-
+		levelText.setString("Hard");
 		break;
 	}
 	for (int i = 0; i < row; i++)
@@ -225,5 +248,9 @@ void Screen::levelUp() {
 	for (int i = 0; i < 4; i++)
 		(ghosts + i)->restart();
 
+	fruitOrder = 0;
+}
 
+void Screen::addFruit() {
+	fruitAdded = true;
 }

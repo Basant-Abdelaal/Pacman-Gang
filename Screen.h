@@ -17,21 +17,24 @@ private:
 	Ghost* ghosts;
 	Font font;
 	Text scoreHeader, highScoreHeader, levelHeader, score, levelText;
-	//vector<RectangleShape> lives;
-	Texture live;
 	int pelletsNum;
-	Texture bricks, small_p, big_p, space;
-	bool directionOk(Ghost&);
-	SoundBuffer eat;
-	Sound s;
+	Texture bricks, small_p, big_p, space, fruit1, fruit2, fruit3, fruit4, fruit5, fruit6;
+	vector <RectangleShape> fruit;
+	int fruitOrder; //Index to which fruit from the vector would be drawn next
+	bool fruitAdded; //whether to draw a fruit or not
+	/*bool directionOk(Ghost&);*/
+	/*SoundBuffer eat;
+	Sound s;*/
 public:
 	Screen(Player& pac, Ghost[4]);
 	bool updatePac(char&);
 	void updateGhosts();
 	bool ghostCollision();
 	void drawAll(RenderWindow&);
-	void levelUp();
+	void setLevel(int);
 	int getLevel() { return level; }
+	void addFruit();
+	bool isFruitAdded() { return fruitAdded; }
 };
 
 

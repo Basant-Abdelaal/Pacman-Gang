@@ -18,11 +18,11 @@ int Player::getLives()
 {
 	return lives;
 }
-
-void Player::increaseLives() 
-{
-	++lives;
-}
+//
+//void Player::increaseLives() 
+//{
+//	++lives;
+//}
 
 bool Player::loseLive()
 {
@@ -53,7 +53,7 @@ void Player::increaseScore(int n)
 
 bool Player::checkLiveBonus()
 {
-	if (score - (lifeIncrements + 1) * 100000 > 0) {
+	if (score - (lifeIncrements + 1) * 10000 > 0) {
 		++lifeIncrements;
 		return true;
 	}
