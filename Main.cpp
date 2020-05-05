@@ -58,27 +58,27 @@ int main()
 					window.close();
 				else if (e.type == Event::KeyPressed)
 					if (!playerChosen) {
-						if (e.key.code == Keyboard::Num1)
+						if (e.key.code == Keyboard::Numpad1 || e.key.code == Keyboard::Num1)
 						{
 							pacman.setImage("pacman.png");
 							playerChosen = true;
 						}
-						else if (e.key.code == Keyboard::Num2)
+						else if (e.key.code == Keyboard::Num2 || e.key.code == Keyboard::Numpad2)
 						{
 							pacman.setImage("mspacman.png");
 							playerChosen = true;
 						}
 					}
 					else if (!isLevelChosen) {
-						if (e.key.code == Keyboard::Num1) {
+						if (e.key.code == Keyboard::Num1 || e.key.code == Keyboard::Numpad1) {
 							myScreen.setLevel(1);
 							isLevelChosen = true;
 						}
-						else if (e.key.code == Keyboard::Num2) {
+						else if (e.key.code == Keyboard::Num2 || e.key.code == Keyboard::Numpad2) {
 							myScreen.setLevel(2);
 							isLevelChosen = true;
 						}
-						else if (e.key.code == Keyboard::Num3) {
+						else if (e.key.code == Keyboard::Num3 || e.key.code == Keyboard::Numpad3) {
 							myScreen.setLevel(3);
 							isLevelChosen = true;
 						}
