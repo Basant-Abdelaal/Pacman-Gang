@@ -4,6 +4,7 @@
 #include "Player.h"
 #include<vector>
 #include<fstream>
+#include <SFML/Audio.hpp>
 #define row 21
 #define col 17
 class Screen
@@ -21,6 +22,8 @@ private:
 	int pelletsNum;
 	Texture bricks, small_p, big_p, space;
 	bool directionOk(Ghost&);
+	SoundBuffer eat;
+	Sound s;
 public:
 	Screen(Player& pac, Ghost[4]);
 	bool updatePac(char&);

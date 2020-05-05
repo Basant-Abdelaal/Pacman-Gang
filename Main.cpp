@@ -1,4 +1,3 @@
-#include <SFML/Audio.hpp>
 #include"Screen.h"
 
 bool runLevelOne(Screen&, Player&, RenderWindow&, Event&, char&);
@@ -6,14 +5,12 @@ Text FinalText;
 Player pacman("pacman", 15, 8, "pacman.png");
 Ghost ghosts[4];
 Clock timerP, timerG;
-
+SoundBuffer buffer;
+Sound sound;
 int main()
 {
-
 	RenderWindow window;
-	SoundBuffer buffer;
 	buffer.loadFromFile("pacman_beginning.wav");
-	Sound sound;
 	sound.setBuffer(buffer);
 	sound.play();
 	Font font;
@@ -36,7 +33,7 @@ int main()
 
 	bool gameOn = false;//If the game is working
 	bool playerChosen = false;//If the player has chosen which avatar to play with
-	
+
 	while (window.isOpen())
 	{
 		while (!gameOn) {
@@ -110,6 +107,9 @@ bool runLevelOne(Screen& myScreen, Player& pacman, RenderWindow& window, Event& 
 	if (timerP.getElapsedTime().asMilliseconds() > 200) {
 		if (!myScreen.updatePac(movement))
 		{
+			buffer.loadFromFile("cong.wav");
+			sound.setBuffer(buffer);
+			sound.play();
 			FinalText.setString("Congratulations");
 			myScreen.levelUp();
 			return false;
@@ -118,6 +118,9 @@ bool runLevelOne(Screen& myScreen, Player& pacman, RenderWindow& window, Event& 
 		{
 			if (!pacman.loseLive())
 			{
+				buffer.loadFromFile("pacman_death.wav");
+				sound.setBuffer(buffer);
+				sound.play();
 				FinalText.setString("GameOver!!");
 				return false;
 			}
@@ -126,7 +129,7 @@ bool runLevelOne(Screen& myScreen, Player& pacman, RenderWindow& window, Event& 
 
 		timerP.restart();
 	}
-	if (timerG.getElapsedTime().asMilliseconds() > 300-50*myScreen.getLevel()) {
+	if (timerG.getElapsedTime().asMilliseconds() > 300 - 50 * myScreen.getLevel()) {
 
 		myScreen.updateGhosts();
 		if (myScreen.ghostCollision())
@@ -134,6 +137,9 @@ bool runLevelOne(Screen& myScreen, Player& pacman, RenderWindow& window, Event& 
 
 			if (!pacman.loseLive())
 			{
+				buffer.loadFromFile("pacman_death.wav");
+				sound.setBuffer(buffer);
+				sound.play();
 				FinalText.setString("GameOver!!");
 				return false;
 			}
