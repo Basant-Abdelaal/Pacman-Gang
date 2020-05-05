@@ -80,6 +80,7 @@ Screen::Screen(Player& pac, Ghost G[4])
 	fruit[5].setTexture(&fruit6);
 
 	fruitOrder = 0;
+
 }
 
 void Screen::updateGhosts()
@@ -148,6 +149,15 @@ bool Screen::updatePac(char& m)
 		}
 	}
 
+	if (pelletsNum == 60) {
+		ghosts[2].okMove(true);
+		clydeTimer.restart();
+	}
+	else if (pelletsNum < 60) {
+		if(clydeTimer.getElapsedTime().asSeconds()>10)
+			ghosts[3].okMove(true);
+	}
+
 	if (pelletsNum == 0)
 	{
 		return 0;
@@ -207,7 +217,7 @@ void Screen::setLevel(int n) {
 
 	switch (level) {
 	case 1:
-		bricks.loadFromFile("bricks1.png");
+		bricks.loadFromFile("brick.png");
 		levelText.setString("Easy");
 		break;
 	case 2:
@@ -249,6 +259,9 @@ void Screen::setLevel(int n) {
 		(ghosts + i)->restart();
 
 	fruitOrder = 0;
+
+	ghosts[3].okMove(false);
+	ghosts[4].okMove(false);
 }
 
 void Screen::addFruit() {

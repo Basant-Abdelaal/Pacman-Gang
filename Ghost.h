@@ -25,7 +25,7 @@ public:
 	void move(int node);
 	void frightMode();
 	int getDirection(int  x, int y);
-	void okMove();
+	void okMove(bool n);
 };
 
 #endif

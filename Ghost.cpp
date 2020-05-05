@@ -155,8 +155,8 @@ int Ghost::getDirection(int  x, int y)
 	return cur.first;
 }
 
-void Ghost::okMove()
+void Ghost::okMove(bool n)
 {
-	canMove = 1;
+	canMove = n;
 }
 

@@ -22,6 +22,7 @@ private:
 	vector <RectangleShape> fruit;
 	int fruitOrder; //Index to which fruit from the vector would be drawn next
 	bool fruitAdded; //whether to draw a fruit or not
+	Clock clydeTimer;
 	/*bool directionOk(Ghost&);*/
 	/*SoundBuffer eat;
 	Sound s;*/
