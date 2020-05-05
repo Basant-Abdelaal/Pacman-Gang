@@ -25,10 +25,10 @@ int main()
 	window.create(VideoMode(800, 800), "Maze");
 
 
-	ghosts[0].setGhost("blinky", 7, 8, "blinky.png", true);//setting Blinky above the ghost house and prepared to move at the beginning of the game
-	ghosts[1].setGhost("pinky", 9, 8, "pinky.png", true);//setting Pinky int the middle of the ghost house and prepared to move at the beginning of the game
-	ghosts[2].setGhost("inky", 9, 7, "inky.png", false);//setting Inky in the left of the ghost house and wouldn't start moving at the beginning of the game
-	ghosts[3].setGhost("clyde", 9, 9, "clyde.png", false);//setting Clyde in the left of the ghost house and wouldn't start moving at the beginning of the game
+	ghosts[0].setGhost("blinky", 7, 8, "blinky.png", "blinky2.png", "blinky3.png", true);//setting Blinky above the ghost house and prepared to move at the beginning of the game
+	ghosts[1].setGhost("pinky", 9, 8, "pinky.png", "pinky2.png", "pinky3.png", true);//setting Pinky int the middle of the ghost house and prepared to move at the beginning of the game
+	ghosts[2].setGhost("inky", 9, 7, "inky.png", "inky2.png", "inky3.png", false);//setting Inky in the left of the ghost house and wouldn't start moving at the beginning of the game
+	ghosts[3].setGhost("clyde", 9, 9, "clyde.png", "clyde2.png", "clyde3.png", false);//setting Clyde in the left of the ghost house and wouldn't start moving at the beginning of the game
 
 	liveTexture.loadFromFile("pacman.png");
 	lives.resize(3);
@@ -85,6 +85,8 @@ int main()
 					}
 					else if (e.key.code == Keyboard::Space)
 						gameOn = true;
+			for (int i = 0; i < 4; i++)
+				ghosts[i].updateAnimation();
 			window.clear();
 			myScreen.drawAll(window);
 			if (!playerChosen)
@@ -98,6 +100,7 @@ int main()
 
 		while (gameOn) {
 			gameOn = runLevel(myScreen, pacman, window, e, movement);
+
 			window.clear();
 			myScreen.drawAll(window);
 
