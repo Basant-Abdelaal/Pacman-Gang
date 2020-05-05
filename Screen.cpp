@@ -127,12 +127,14 @@ bool Screen::updatePac(char& m)
 			/*eat.loadFromFile("pacman_chomp.wav");
 			s.setBuffer(eat);
 			s.play();*/
-			pacman->increaseScore(250);
+			pacman->increaseScore(10);
 			score.setString(pacman->getScore());
 			pelletsNum--;
 		}
 		else if (pellets[newRow][newColumn] == 2)
 		{
+			pacman->increaseScore(50);
+			score.setString(pacman->getScore());
 			//freight mode
 			pelletsNum--;
 		}
@@ -143,7 +145,7 @@ bool Screen::updatePac(char& m)
 	if (fruitAdded) {
 		if (pacman->getShape().getGlobalBounds().intersects(fruit[fruitOrder].getGlobalBounds())) {
 			fruitAdded = false;
-			pacman->increaseScore(500*(fruitOrder+1));
+			pacman->increaseScore(250*(fruitOrder+1));
 			score.setString(pacman->getScore());
 			fruitOrder = (fruitOrder + 1) % fruit.size();
 		}
