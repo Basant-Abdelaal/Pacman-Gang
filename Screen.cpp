@@ -2,7 +2,7 @@
 
 Screen::Screen(Player& pac, Ghost G[4])
 {
-	pacman = & pac;
+	pacman = &pac;
 	ghosts = G;
 	ifstream p;
 	p.open("pellets.txt");
@@ -31,7 +31,7 @@ Screen::Screen(Player& pac, Ghost G[4])
 			{
 				board[i][j].setTexture(&bricks);
 			}
-			else if(pellets[i][j]==1)   //Pellets small
+			else if (pellets[i][j] == 1)   //Pellets small
 			{
 				board[i][j].setTexture(&small_p);
 				pelletsNum++;
@@ -52,7 +52,7 @@ Screen::Screen(Player& pac, Ghost G[4])
 	scoreHeader.setString("Score:"); scoreHeader.setPosition(Vector2f(0, 0)); scoreHeader.setCharacterSize(27); scoreHeader.setFillColor(Color::White); scoreHeader.setFont(font);
 	score.setString("0"); score.setPosition(Vector2f(0, 32)); score.setCharacterSize(27); score.setFillColor(Color::White); score.setFont(font);
 	levelHeader.setString("Level:"); levelHeader.setPosition(Vector2f(32 * 15, 0)); levelHeader.setCharacterSize(27); levelHeader.setFillColor(Color::White); levelHeader.setFont(font);
-	levelText.setString(to_string(level)); levelText.setPosition(Vector2f(32*15, 32)); levelText.setCharacterSize(27); levelText.setFillColor(Color::White); levelText.setFont(font);
+	levelText.setString(to_string(level)); levelText.setPosition(Vector2f(32 * 15, 32)); levelText.setCharacterSize(27); levelText.setFillColor(Color::White); levelText.setFont(font);
 	highScoreHeader.setString("HighScore:"); highScoreHeader.setPosition(Vector2f(32 * 6, 0)); highScoreHeader.setCharacterSize(27); highScoreHeader.setFillColor(Color::White); highScoreHeader.setFont(font);
 
 	/*live.loadFromFile("live.png");
@@ -68,14 +68,14 @@ Screen::Screen(Player& pac, Ghost G[4])
 void Screen::updateGhosts()
 {
 	for (int i = 0; i < 4; i++) {
-		ghosts[i].move(ghosts[i].getDirection(pacman->getRow(),pacman->getColumn()));
+		ghosts[i].move(ghosts[i].getDirection(pacman->getRow(), pacman->getColumn()));
 	}
 }
 
 
 bool Screen::updatePac(char& m)
 {
-	int newRow=pacman->getRow(), newColumn=pacman->getColumn(); //for pac
+	int newRow = pacman->getRow(), newColumn = pacman->getColumn(); //for pac
 	switch (m)
 	{
 	case 'U':
@@ -91,12 +91,12 @@ bool Screen::updatePac(char& m)
 		newColumn--;
 		break;
 	}
-	if (newColumn == 0 && newRow==9)
+	if (newColumn == 0 && newRow == 9)
 	{
 		newColumn = 16;
 		pacman->move(newRow, 16);
 	}
-	else if (newColumn == 16)
+	if (newColumn == 16 && newRow == 9)
 	{
 		newColumn = 0;
 		pacman->move(newRow, 0);
@@ -106,6 +106,9 @@ bool Screen::updatePac(char& m)
 		pacman->move(newRow, newColumn);
 		if (pellets[newRow][newColumn] == 1)
 		{
+			eat.loadFromFile("pacman_chomp.wav");
+			s.setBuffer(eat);
+			s.play();
 			pacman->increaseScore(500);
 			score.setString(pacman->getScore());
 			pelletsNum--;
@@ -220,7 +223,7 @@ void Screen::levelUp() {
 
 	pacman->restart();
 	for (int i = 0; i < 4; i++)
-		(ghosts+i)->restart();
+		(ghosts + i)->restart();
 
-	
+
 }
