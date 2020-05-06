@@ -4,10 +4,11 @@ bool runLevel(Screen&, Player&, RenderWindow&, Event&, char&);
 Text FinalText;
 Player pacman("pacman", 15, 8, "pacman.png");
 Ghost ghosts[4];
-Clock timerP, timerG, fruitTimer;
+Clock timerP, timerG, fruitTimer, freightTimer;
 vector<RectangleShape> lives;
 Texture liveTexture;
 string gender;
+bool freight=0;
 //SoundBuffer buffer;
 //Sound sound;
 int main()
@@ -41,10 +42,10 @@ int main()
 	window.create(VideoMode(800, 800), "Maze");
 
 
-	ghosts[0].setGhost("blinky", 7, 8, "blinky.png", "blinky2.png", "blinky3.png", true);//setting Blinky above the ghost house and prepared to move at the beginning of the game
-	ghosts[1].setGhost("pinky", 9, 8, "pinky.png", "pinky2.png", "pinky3.png", true);//setting Pinky int the middle of the ghost house and prepared to move at the beginning of the game
-	ghosts[2].setGhost("inky", 9, 7, "inky.png", "inky2.png", "inky3.png", false);//setting Inky in the left of the ghost house and wouldn't start moving at the beginning of the game
-	ghosts[3].setGhost("clyde", 9, 9, "clyde.png", "clyde2.png", "clyde3.png", false);//setting Clyde in the left of the ghost house and wouldn't start moving at the beginning of the game
+	ghosts[0].setGhost("blinky", 7, 8, "blinky.png", "blinky2.png", "blinky3.png", true, true);//setting Blinky above the ghost house and prepared to move at the beginning of the game
+	ghosts[1].setGhost("pinky", 9, 8, "pinky.png", "pinky2.png", "pinky3.png", true,true);//setting Pinky int the middle of the ghost house and prepared to move at the beginning of the game
+	ghosts[2].setGhost("inky", 9, 7, "inky.png", "inky2.png", "inky3.png", false,false);//setting Inky in the left of the ghost house and wouldn't start moving at the beginning of the game
+	ghosts[3].setGhost("clyde", 9, 9, "clyde.png", "clyde2.png", "clyde3.png", false,false);//setting Clyde in the left of the ghost house and wouldn't start moving at the beginning of the game
 
 	pacman.addSnapshots("pacman.png", "pacman2.png", "pacman3.png");
 
@@ -224,12 +225,29 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 			}
 			movement = ' ';
 		}
-
+		if (myScreen.isFruitEaten())
+		{
+			freight = 1;
+			for (int i = 0; i < 4; i++)
+				ghosts[i].freightMode();
+		}
+		
 		timerP.restart();
 	}
 	if (timerG.getElapsedTime().asMilliseconds() > 400 - 80 * myScreen.getLevel()) {
 
-		myScreen.updateGhosts();
+		myScreen.updateGhosts(freight);
+		if(freight)
+		{
+			if (freightTimer.getElapsedTime().asSeconds() > 3)
+			{
+				freight = 0;
+				for (int i = 0; i < 4; i++)
+					ghosts[i].unFreight();
+			}
+
+		}
+		freightTimer.restart();
 		if (myScreen.ghostCollision())
 		{
 

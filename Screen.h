@@ -29,13 +29,14 @@ private:
 public:
 	Screen(Player& pac, Ghost[4]);
 	bool updatePac(char&);
-	void updateGhosts();
+	void updateGhosts(bool freight);
 	bool ghostCollision();
 	void drawAll(RenderWindow&);
 	void setLevel(int);
 	int getLevel() { return level; }
 	void addFruit();
 	bool isFruitAdded() { return fruitAdded; }
+	bool isFruitEaten();
 };
 
 

@@ -83,11 +83,16 @@ Screen::Screen(Player& pac, Ghost G[4])
 
 }
 
-void Screen::updateGhosts()
+void Screen::updateGhosts(bool freight)
 {
-	for (int i = 0; i < 4; i++) {
-		ghosts[i].move(ghosts[i].getDirection(pacman->getRow(), pacman->getColumn()));
+	if(!freight)
+	{
+		for (int i = 0; i < 4; i++) 
+			ghosts[i].move(ghosts[i].getDirection(pacman->getRow(), pacman->getColumn()));
 	}
+	else
+		for (int i = 0; i < 4; i++)
+			ghosts[i].move(ghosts[i].getFreightDirection(pacman->getRow(), pacman->getColumn()));
 }
 
 
@@ -147,6 +152,7 @@ bool Screen::updatePac(char& m)
 			fruitAdded = false;
 			pacman->increaseScore(250*(fruitOrder+1));
 			score.setString(pacman->getScore());
+
 			fruitOrder = (fruitOrder + 1) % fruit.size();
 		}
 	}
@@ -268,4 +274,12 @@ void Screen::setLevel(int n) {
 
 void Screen::addFruit() {
 	fruitAdded = true;
+}
+
+bool Screen::isFruitEaten()
+{
+	if (fruit[fruitOrder].getGlobalBounds().intersects(pacman->getShape().getGlobalBounds()))
+		return true;
+	else
+		return false;
 }

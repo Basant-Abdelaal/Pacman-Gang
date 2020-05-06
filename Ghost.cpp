@@ -2,6 +2,7 @@
 
 Ghost::Ghost():Object() {
 	int dx[4] = { 1,-1,0,0 }, dy[4] = { 0,0,1,-1 };
+	startLeft = 0;
 	srand(time(0));
 	canMove = 0;
 	ifstream g;
@@ -30,12 +31,15 @@ Ghost::Ghost():Object() {
 				}
 			}
 		}
+	graph[71].push_back(85);
+	graph[85].push_back(71);
 	initialRow = 0;
 	initialColumn = 0;
 	memset(cost, -1, sizeof cost);
+	wait = 0;
 }
 
-Ghost::Ghost(string n, int initialR, int initialC, string imagename):Object(n, initialR, initialC, imagename)
+Ghost::Ghost(string n, int initialR, int initialC, string imagename, bool sl):Object(n, initialR, initialC, imagename)
 {
 	int dx[4] = { 1,-1,0,0 }, dy[4] = { 0,0,1,-1 };
 	srand(time(0));
@@ -67,6 +71,16 @@ Ghost::Ghost(string n, int initialR, int initialC, string imagename):Object(n, i
 			}
 		}
 	memset(cost, -1, sizeof cost);
+	startLeft = sl;
+	if (sl)
+	{
+		if (gpath[initialRow][initialColumn] == 78)
+			wait = 3;
+		else if (gpath[initialRow][initialColumn] == 61)
+			wait = 1;
+	}
+	else
+		wait = 0;
 }
 
 Ghost& Ghost::operator=(Ghost& g) {
@@ -80,7 +94,8 @@ Ghost& Ghost::operator=(Ghost& g) {
 	return *this;
 }
 
-void Ghost::setGhost(string n, int initialR, int initialC, string imagename1, string imagename2, string imagename3, bool can) {
+void Ghost::setGhost(string n, int initialR, int initialC, string imagename1, string imagename2, string imagename3, bool can, bool sl) {
+	startLeft = sl;
 	canMove = can;
 	name = n;
 	initialRow = initialR;
@@ -93,31 +108,87 @@ void Ghost::setGhost(string n, int initialR, int initialC, string imagename1, st
 	shape.setSize(Vector2f(32, 32));
 
 	this->addSnapshots(imagename1, imagename2, imagename3);
+
+	if (sl)
+	{
+		if (gpath[initialRow][initialColumn] == 78)
+			wait = 3;
+		else if (gpath[initialRow][initialColumn] == 61)
+			wait = 1;
+	}
+	else
+		wait = 0;
 }
 
 void Ghost::move(int node)
 {
 	if (canMove)
 	{
-		bool f = 1;
-		for(int i=0;i<row && f;i++)
-			for(int j=0;j<col && f;j++)
-				if (gpath[i][j] == node)
-				{
-					curRow = i;
-					curColumn = j;
-					f = 0;
-				}
-		updatePosition();
+		if (!wait)
+		{
+			bool f = 1;
+			for (int i = 0; i < row && f; i++)
+				for (int j = 0; j < col && f; j++)
+					if (gpath[i][j] == node)
+					{
+						curRow = i;
+						curColumn = j;
+						f = 0;
+					}
+			updatePosition();
+		}
+		else
+		{
+			switch (wait)
+			{
+			case 3:
+				for (int i = 0; i < row; i++)
+					for (int j = 0; j < col; j++)
+						if (gpath[i][j] == 68)
+						{
+							curRow = i;
+							curColumn = j;
+						}
+				updatePosition();
+				wait--;
+				break;
+			case 2:
+				for (int i = 0; i < row; i++)
+					for (int j = 0; j < col; j++)
+						if (gpath[i][j] == 61)
+						{
+							curRow = i;
+							curColumn = j;
+						}
+				updatePosition();
+				wait--;
+				break;
+			case 1:
+				for (int i = 0; i < row; i++)
+					for (int j = 0; j < col; j++)
+						if (gpath[i][j] == 60)
+						{
+							curRow = i;
+							curColumn = j;
+						}
+				updatePosition();
+				wait--;
+				break;
+			}
+		}
 	}
 }
 
 
-void Ghost::frightMode()
+void Ghost::freightMode()
 {
 	shape.setFillColor(Color::Blue);
 }
 
+void Ghost::unFreight()
+{
+	shape.setFillColor(Color::Transparent);
+}
 
 int Ghost::getDirection(int  x, int y)
 {
@@ -153,6 +224,39 @@ int Ghost::getDirection(int  x, int y)
 				q.push(make_pair(graph[cur.first][i], cur.second - 1));
 	}
 	return cur.first;
+}
+
+
+int Ghost::getFreightDirection(int x, int y)
+{
+	queue<pair<int, int> >q;
+	q.push(make_pair(gpath[x][y], 0));
+	pair<int, int> cur;
+	memset(cost, -1, sizeof cost);
+	int maxCost = -1,answer;
+	while (q.size())
+	{
+		cur = q.front();
+		q.pop();
+		if (cost[cur.first] != -1) continue;
+		cost[cur.first] = cur.second;
+		for (int i = 0; i < graph[cur.first].size(); i++)
+		{
+			if (cost[graph[cur.first][i]] == -1)
+				q.push(make_pair(graph[cur.first][i], cur.second + 1));
+		}
+	}
+	while (q.size())
+		q.pop();
+	for (int i = 0; i < graph[gpath[curRow][curColumn]].size(); i++)
+	{
+		if (cost[graph[gpath[curRow][curColumn]][i]] > maxCost)
+		{
+			answer = graph[gpath[curRow][curColumn]][i];
+			maxCost = cost[graph[gpath[curRow][curColumn]][i]];
+		}
+	}
+	return answer;
 }
 
 void Ghost::okMove(bool n)

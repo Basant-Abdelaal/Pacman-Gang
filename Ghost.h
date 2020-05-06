@@ -17,14 +17,18 @@ private:
 	int gpath[row][col];
 	vector<int> graph[200];
 	int cost[200];
+	bool startLeft;
+	int wait;
 public:
 	Ghost();
-	Ghost(string n, int initialR, int initialC, string imagename);
+	Ghost(string n, int initialR, int initialC, string imagename,bool sl);
 	Ghost& operator=(Ghost&);
-	void setGhost(string n, int initialR, int initialC, string imagename1, string imagename2, string imagename3, bool can);
+	void setGhost(string n, int initialR, int initialC, string imagename1, string imagename2, string imagename3, bool can, bool sl);
 	void move(int node);
-	void frightMode();
+	void freightMode();
+	void unFreight();
 	int getDirection(int  x, int y);
+	int getFreightDirection(int x, int y);
 	void okMove(bool n);
 };
 

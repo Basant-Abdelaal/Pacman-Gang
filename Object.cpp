@@ -62,6 +62,7 @@ void Object::restart() {
 }
 
 void Object::addSnapshots(string n1, string n2, string n3) {
+	snapshot.clear();
 	snapshot.resize(4);
 	snapshot[0].loadFromFile(n1);
 	snapshot[1].loadFromFile(n2);
