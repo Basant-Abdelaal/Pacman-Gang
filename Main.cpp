@@ -7,7 +7,7 @@ Ghost ghosts[4];
 Clock timerP, timerG, fruitTimer;
 vector<RectangleShape> lives;
 Texture liveTexture;
-
+string gender;
 //SoundBuffer buffer;
 //Sound sound;
 int main()
@@ -18,10 +18,26 @@ int main()
 	sound.play();*/
 	Font font;
 	font.loadFromFile("aerial.ttf");
-	Text Ready; Ready.setString("Ready!"); Ready.setPosition(Vector2f(55 + 7 * 32, 62 + 11 * 32)); Ready.setCharacterSize(28); Ready.setFillColor(Color::White); Ready.setFont(font);
-	FinalText.setCharacterSize(60); FinalText.setPosition(Vector2f(70, 70 + 10 * 32)); FinalText.setFillColor(Color::White); FinalText.setFont(font);
-	Text choosePlayer;  choosePlayer.setString("1) Pacman OR 2) Ms Pacman ?"); choosePlayer.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32)); choosePlayer.setCharacterSize(23); choosePlayer.setFillColor(Color::White); choosePlayer.setFont(font);
-	Text chooseLevel;  chooseLevel.setString("1)Easy  2)Medium  3)Hard"); chooseLevel.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32)); chooseLevel.setCharacterSize(23); chooseLevel.setFillColor(Color::White); chooseLevel.setFont(font);
+	Text Ready; Ready.setString("Ready!");
+	Ready.setPosition(Vector2f(55 + 7 * 32, 62 + 11 * 32));
+	Ready.setCharacterSize(28);
+	Ready.setFillColor(Color::White);
+	Ready.setFont(font);
+	FinalText.setCharacterSize(60);
+	FinalText.setPosition(Vector2f(70, 70 + 10 * 32));
+	FinalText.setFillColor(Color::White); FinalText.setFont(font);
+	Text choosePlayer; 
+	choosePlayer.setString("1) Pacman OR 2) Ms Pacman ?");
+	choosePlayer.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32)); 
+	choosePlayer.setCharacterSize(23);
+	choosePlayer.setFillColor(Color::White); 
+	choosePlayer.setFont(font);
+	Text chooseLevel;  
+	chooseLevel.setString("1)Easy  2)Medium  3)Hard");
+	chooseLevel.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32));
+	chooseLevel.setCharacterSize(23);
+	chooseLevel.setFillColor(Color::White);
+	chooseLevel.setFont(font);
 	window.create(VideoMode(800, 800), "Maze");
 
 
@@ -62,12 +78,13 @@ int main()
 					if (!playerChosen) {
 						if (e.key.code == Keyboard::Numpad1 || e.key.code == Keyboard::Num1)
 						{
+							gender ="man";
 							pacman.setImage("pacman.png");
 							pacman.addSnapshots("pacman.png", "pacman2.png", "pacman3.png");
-							playerChosen = true;
-						}
+							playerChosen = true;}
 						else if (e.key.code == Keyboard::Num2 || e.key.code == Keyboard::Numpad2)
 						{
+							gender = "girl";
 							pacman.setImage("mspacman.png");
 							pacman.addSnapshots("mspacman.png", "mspacman2.png", "mspacman3.png");
 							playerChosen = true;
@@ -141,15 +158,47 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 			{
 			case Keyboard::Up:
 				movement = 'U';
+				if (gender == "man") {
+					pacman.addSnapshots("pacman-up.png", "pacman2-up.png", "pacman3-up.png");
+					pacman.updateAnimation();
+				}
+				else {
+					pacman.addSnapshots("mspacman-up.png", "mspacman2-up.png", "mspacman3-up.png");
+					pacman.updateAnimation();
+				}
 				break;
 			case Keyboard::Down:
 				movement = 'D';
+				if (gender == "man") {
+					pacman.addSnapshots("pacman-down.png", "pacman2-down.png", "pacman3-down.png");
+					pacman.updateAnimation();
+				}
+				else {
+					pacman.addSnapshots("mspacman-down.png", "mspacman2-down.png", "mspacman3-down.png");
+					pacman.updateAnimation();
+				}
 				break;
 			case Keyboard::Right:
 				movement = 'R';
+				if (gender == "man") {
+					pacman.addSnapshots("pacman.png", "pacman2.png", "pacman3.png");
+					pacman.updateAnimation();
+				}
+				else {
+					pacman.addSnapshots("mspacman.png", "mspacman2.png", "mspacman3.png");
+					pacman.updateAnimation();
+				}
 				break;
 			case Keyboard::Left:
 				movement = 'L';
+				if (gender == "man") {
+					pacman.addSnapshots("pacman-left.png", "pacman2-left.png", "pacman3-left.png");
+					pacman.updateAnimation();
+				}
+				else {
+					pacman.addSnapshots("mspacman-left.png", "mspacman2-left.png", "mspacman3-left.png");
+					pacman.updateAnimation();
+				}
 				break;
 			}
 		}
@@ -209,10 +258,10 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 			lives[i].setTexture(&liveTexture);
 		}
 	}
-	if(myScreen.isFruitAdded())
+	if (myScreen.isFruitAdded())
 		fruitTimer.restart();
 	else {
-		if (fruitTimer.getElapsedTime().asSeconds() > 10*myScreen.getLevel()) {
+		if (fruitTimer.getElapsedTime().asSeconds() > 10 * myScreen.getLevel()) {
 			myScreen.addFruit();
 		}
 	}
