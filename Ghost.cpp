@@ -83,16 +83,6 @@ Ghost::Ghost(string n, int initialR, int initialC, string imagename, bool sl) :O
 		wait = 0;
 }
 
-Ghost& Ghost::operator=(Ghost& g) {
-	canMove = g.canMove;
-	name = g.name;
-	curRow = g.curRow;
-	curColumn = g.curColumn;
-	updatePosition();
-	shape = g.shape;
-	texture = g.texture;
-	return *this;
-}
 
 void Ghost::setGhost(string n, int initialR, int initialC, string imagename1, string imagename2, string imagename3, bool can, bool sl) {
 	startLeft = sl;
@@ -180,12 +170,12 @@ void Ghost::move(int node)
 }
 
 
-void Ghost::freightMode()
+void Ghost::freightMode() //To go into freight mode
 {
 	shape.setFillColor(Color::Blue);
 }
 
-void Ghost::unFreight()
+void Ghost::unFreight() //To go out of freight mode
 {
 	shape.setFillColor(Color::White);
 }

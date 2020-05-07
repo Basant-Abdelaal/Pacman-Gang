@@ -10,7 +10,7 @@ vector<RectangleShape> lives;
 Texture liveTexture;
 string gender;
 pair<bool, bool> s;
-bool freight =0,cong=1;
+bool freight =0,win=1;
 fstream playersData;
 vector<pair<string, int>> players;
 pair<string, int> myPlayer; //the player who is playing
@@ -98,12 +98,12 @@ int main()
 	bool avatarChosen = false;//If the player has chosen which avatar to play with
 	bool isLevelChosen = false;
 	bool playerChosen = false;
-	int eva = 0;
+	int option = 0;
 
 	playersData.open("players.txt");
 	if (playersData.fail())
 	{
-		cout << "Couldn't retrieve doctors data\n";
+		cout << "Couldn't retrieve players' data\n";
 		exit(1);
 	}
 	string str;  int score; //name & score of player
@@ -126,7 +126,7 @@ int main()
 	//cout << "players size is " << players.size() << endl;
 	while (window.isOpen())
 	{
-		while (!eva)
+		while (!option)
 		{
 			while (window.pollEvent(e))
 				if (e.type == Event::Closed)
@@ -134,9 +134,9 @@ int main()
 
 				else if (e.type == Event::KeyPressed)
 					if (e.key.code == Keyboard::Numpad1 || e.key.code == Keyboard::Num1)
-						eva = 1;
+						option = 1;
 					else if (e.key.code == Keyboard::Num2 || e.key.code == Keyboard::Numpad2)
-						eva = 2;
+						option = 2;
 					
 				
 			for (int i = 0; i < 4; i++)
@@ -150,7 +150,7 @@ int main()
 			
 			window.display();
 		}
-		while (!playerChosen && eva==1)
+		while (!playerChosen && option==1)
 		{
 			while (window.pollEvent(e))
 				if (e.type == Event::Closed)
@@ -188,7 +188,7 @@ int main()
 			window.display();
 		}
 
-		while (!playerChosen && eva == 2)
+		while (!playerChosen && option == 2)
 		{
 			//cout << "Here\n";
 			if (!flag)
@@ -327,6 +327,8 @@ int main()
 			}
 			for (int i = 0; i < lives.size(); i++)
 				window.draw(lives[i]);
+			for (int i = 0; i < 4; i++)
+				ghosts[i].updateAnimation();
 			window.display();
 		}
 	}
@@ -394,9 +396,9 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 	if (timerP.getElapsedTime().asMilliseconds() > 200) {
 
 		s = myScreen.updatePac(movement);
-		cong = s.first;
+		win = s.first;
 		
-		if (cong)
+		if (win)
 		{
 			/*buffer.loadFromFile("cong.wav");
 			sound.setBuffer(buffer);

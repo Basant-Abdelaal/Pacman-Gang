@@ -38,12 +38,12 @@ void Object::drawOnWindow(RenderWindow& win)
 	win.draw(shape);
 }
 
-int Object::getHorizontal()
+int Object::getHorizontal() //To get actual horizontal position on screen
 {
 	return curHorizontal;
 }
 
-int Object::getVertical()
+int Object::getVertical() //To get actual vertical position on screen
 {
 	return curVertical;
 }
@@ -74,7 +74,7 @@ void Object::addSnapshots(string n1, string n2, string n3) {
 
 
 void Object::updateAnimation() {
-	if (animationTimer.getElapsedTime().asMilliseconds() > 250) {
+	if (animationTimer.getElapsedTime().asMilliseconds() > 250) { //So that the total time of the animation is 1 second
 		snapshotIndex = (snapshotIndex + 1) % 4;
 		texture = snapshot[snapshotIndex];
 		animationTimer.restart();

@@ -26,15 +26,15 @@ public:
 	Object(string n, int initialR, int initialC, string imagename);
 	int getRow();
 	int getColumn();
-	int getHorizontal();
-	int getVertical();
+	int getHorizontal(); //To get actual horizontal position on screen
+	int getVertical(); //To get actual vertical position on screen
 	RectangleShape& getShape() { return shape; }
-	void updatePosition();
+	void updatePosition(); //updates the horizontal and vertical positions according to the row and column
 	void drawOnWindow(RenderWindow& win);
 	void move() {};
-	void addSnapshots(string, string, string);
-	void updateAnimation();
-	void restart();
+	void addSnapshots(string, string, string); //adds snapshots of the object's animation
+	void updateAnimation(); //updates object's animation
+	void restart(); //object returns to initial state
 };
 
 #endif

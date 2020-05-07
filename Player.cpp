@@ -25,16 +25,12 @@ int Player::getLives()
 {
 	return lives;
 }
-//
-//void Player::increaseLives() 
-//{
-//	++lives;
-//}
 
-bool Player::loseLive()
+
+bool Player::loseLive() //returns false if player lost all lives
 {
 	--lives;
-	if (lives == 0)
+	if (lives == 0) //checks if the player lost all lives
 		return false;
 	else {
 		curColumn = initialColumn;
@@ -54,13 +50,13 @@ void Player::move(int horizontal, int vertical)
 void Player::increaseScore(int n)
 {
 	score += n;
-	if (checkLiveBonus())
+	if (checkLiveBonus()) //checks if score is high enough to increase lives
 		lives++;
 }
 
-bool Player::checkLiveBonus()
+bool Player::checkLiveBonus() //checks if score is high enough to increase lives
 {
-	if (score - (lifeIncrements + 1) * 10000 > 0) {
+	if (score > (lifeIncrements + 1) * 10000) { //so that every time the player earns 10000 points, lives are incremented
 		++lifeIncrements;
 		return true;
 	}

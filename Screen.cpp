@@ -4,6 +4,7 @@ Screen::Screen(Player& pac, Ghost G[4])
 {
 	pacman = &pac;
 	ghosts = G;
+
 	ifstream p;
 	p.open("pellets.txt");
 	if (p.is_open())
@@ -22,6 +23,8 @@ Screen::Screen(Player& pac, Ghost G[4])
 
 	pelletsNum = 0;
 
+	//Setting board
+	//Increasing number of pellets every time a pellet is drawn 
 	for (int i = 0; i < row; i++)
 		for (int j = 0; j < col; j++)
 		{
@@ -46,16 +49,18 @@ Screen::Screen(Player& pac, Ghost G[4])
 				board[i][j].setTexture(&space);
 			}
 		}
-	level = 1;
-	font.loadFromFile("aerial.ttf");
 
+	level = 1; //Initiallizing level
+
+	font.loadFromFile("aerial.ttf");
+	//Setting texts
 	scoreHeader.setString("Score:"); scoreHeader.setPosition(Vector2f(0, 0)); scoreHeader.setCharacterSize(27); scoreHeader.setFillColor(Color::White); scoreHeader.setFont(font);
 	score.setString("0"); score.setPosition(Vector2f(0, 32)); score.setCharacterSize(27); score.setFillColor(Color::White); score.setFont(font);
 	levelHeader.setString("Level:"); levelHeader.setPosition(Vector2f(32 * 15, 0)); levelHeader.setCharacterSize(27); levelHeader.setFillColor(Color::White); levelHeader.setFont(font);
 	levelText.setString("Easy"); levelText.setPosition(Vector2f(32 * 15, 32)); levelText.setCharacterSize(27); levelText.setFillColor(Color::White); levelText.setFont(font);
 	highScoreHeader.setString("HighScore:"); highScoreHeader.setPosition(Vector2f(32 * 6, 0)); highScoreHeader.setCharacterSize(27); highScoreHeader.setFillColor(Color::White); highScoreHeader.setFont(font);
 
-
+	//setting fruits' textures
 	fruit1.loadFromFile("fruit1.png");
 	fruit2.loadFromFile("fruit2.png");
 	fruit3.loadFromFile("fruit3.png");
@@ -63,6 +68,7 @@ Screen::Screen(Player& pac, Ghost G[4])
 	fruit5.loadFromFile("fruit5.png");
 	fruit6.loadFromFile("fruit6.png");
 
+	//setting all fruits' shapes
 	fruit.resize(6);
 	for (int i = 0; i < 6; i++)
 		fruit[i].setSize(Vector2f(32, 32));
@@ -79,7 +85,7 @@ Screen::Screen(Player& pac, Ghost G[4])
 	fruit[5].setPosition(64 + 32 * 7, 64 + 32 * 11);
 	fruit[5].setTexture(&fruit6);
 
-	fruitOrder = 0;
+	fruitOrder = 0; //starting with the first fruit in the vector
 
 }
 
@@ -90,7 +96,7 @@ void Screen::setHighScore(int n)
 
 }
 
-void Screen::updateGhosts(bool freight)
+void Screen::updateGhosts(bool freight) 
 {
 	vector<int> n;
 	n.clear();
@@ -247,13 +253,13 @@ void Screen::setLevel(int n) {
 
 	pelletsNum = 0;
 
-	switch (level) {
+	switch (level) { //sets the level's theme
 	case 1:
 		bricks.loadFromFile("brick.png");
 		levelText.setString("Easy");
 		break;
 	case 2:
-		bricks.loadFromFile("bricks2.png");
+		bricks.loadFromFile("flowers.png");
 		levelText.setString("Medium");
 		break;
 	case 3:
@@ -261,7 +267,8 @@ void Screen::setLevel(int n) {
 		levelText.setString("Hard");
 		break;
 	}
-	for (int i = 0; i < row; i++)
+
+	for (int i = 0; i < row; i++) //redraws the board
 		for (int j = 0; j < col; j++)
 		{
 			board[i][j].setPosition(64 + 32 * j, 64 + 32 * i);
@@ -286,14 +293,16 @@ void Screen::setLevel(int n) {
 			}
 		}
 
+	//initiallizes the players and ghosts
 	pacman->restart();
 	for (int i = 0; i < 4; i++)
 		(ghosts + i)->restart();
 
-	fruitOrder = 0;
+	fruitOrder = 0; //starts the fruits vector from beginning
 
+	//stops clyde and inky from moving until conditions are set
+	ghosts[2].okMove(false);
 	ghosts[3].okMove(false);
-	ghosts[4].okMove(false);
 }
 
 void Screen::addFruit() {
