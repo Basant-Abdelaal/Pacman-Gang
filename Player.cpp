@@ -1,20 +1,20 @@
 #include "Player.h"
 
-Player::Player(string n, int initialR, int initialC, string imagename):Object(n,initialR, initialC, imagename)
+Player::Player(string n, int initialR, int initialC, string imagename) :Object(n, initialR, initialC, imagename)
 {
 	score = 0;
 	lifeIncrements = 0;
 	lives = 3;
 }
 
-string Player::getScore() 
+string Player::getScore()
 {
 	string str = to_string(score);
 	return str;
-	
+
 }
 
-int Player::getLives() 
+int Player::getLives()
 {
 	return lives;
 }
@@ -37,7 +37,7 @@ bool Player::loseLive()
 	}
 }
 
-void Player::move(int horizontal, int vertical) 
+void Player::move(int horizontal, int vertical)
 {
 	curColumn = vertical;
 	curRow = horizontal;

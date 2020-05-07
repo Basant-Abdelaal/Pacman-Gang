@@ -1,6 +1,6 @@
 #include "Ghost.h"
 
-Ghost::Ghost():Object() {
+Ghost::Ghost() :Object() {
 	int dx[4] = { 1,-1,0,0 }, dy[4] = { 0,0,1,-1 };
 	startLeft = 0;
 	srand(time(0));
@@ -16,7 +16,7 @@ Ghost::Ghost():Object() {
 	}
 	g.close();
 	int r, c, node;
-	for(int i=0;i<row;i++)
+	for (int i = 0; i < row; i++)
 		for (int j = 0; j < col; j++)
 		{
 			if (gpath[i][j] == -1)
@@ -39,7 +39,7 @@ Ghost::Ghost():Object() {
 	wait = 0;
 }
 
-Ghost::Ghost(string n, int initialR, int initialC, string imagename, bool sl):Object(n, initialR, initialC, imagename)
+Ghost::Ghost(string n, int initialR, int initialC, string imagename, bool sl) :Object(n, initialR, initialC, imagename)
 {
 	int dx[4] = { 1,-1,0,0 }, dy[4] = { 0,0,1,-1 };
 	srand(time(0));
@@ -187,10 +187,10 @@ void Ghost::freightMode()
 
 void Ghost::unFreight()
 {
-	shape.setFillColor(Color::Transparent);
+	shape.setFillColor(Color::White);
 }
 
-int Ghost::getDirection(int  x, int y)
+int Ghost::getDirection(int  x, int y, vector<int> occupied)
 {
 	queue<pair<int, int> >q;
 	q.push(make_pair(gpath[curRow][curColumn], 0));
@@ -223,23 +223,29 @@ int Ghost::getDirection(int  x, int y)
 			if (cost[graph[cur.first][i]] == cur.second - 1)
 				q.push(make_pair(graph[cur.first][i], cur.second - 1));
 	}
+	for (int i = 0; i < occupied.size(); i++)
+		if (occupied[i] == cur.first)
+			cur.first = gpath[curRow][curColumn];
 	return cur.first;
 }
 
 
-int Ghost::getFreightDirection(int x, int y)
+int Ghost::getFreightDirection(vector<int> occupied)
 {
+	//if (gpath[curRow][curColumn] == gpath[initialRow][initialColumn])
+		//return gpath[curRow][curColumn];
 	queue<pair<int, int> >q;
-	q.push(make_pair(gpath[x][y], 0));
+	q.push(make_pair(gpath[curRow][curColumn], 0));
 	pair<int, int> cur;
 	memset(cost, -1, sizeof cost);
-	int maxCost = -1,answer;
 	while (q.size())
 	{
 		cur = q.front();
 		q.pop();
 		if (cost[cur.first] != -1) continue;
 		cost[cur.first] = cur.second;
+		if (cur.first == gpath[initialRow][initialColumn])
+			break;
 		for (int i = 0; i < graph[cur.first].size(); i++)
 		{
 			if (cost[graph[cur.first][i]] == -1)
@@ -248,15 +254,21 @@ int Ghost::getFreightDirection(int x, int y)
 	}
 	while (q.size())
 		q.pop();
-	for (int i = 0; i < graph[gpath[curRow][curColumn]].size(); i++)
+	q.push(cur);
+	while (q.size())
 	{
-		if (cost[graph[gpath[curRow][curColumn]][i]] > maxCost)
-		{
-			answer = graph[gpath[curRow][curColumn]][i];
-			maxCost = cost[graph[gpath[curRow][curColumn]][i]];
-		}
+		cur = q.front();
+		q.pop();
+		if (cur.second == 1)
+			break;
+		for (int i = 0; i < graph[cur.first].size(); i++)
+			if (cost[graph[cur.first][i]] == cur.second - 1)
+				q.push(make_pair(graph[cur.first][i], cur.second - 1));
 	}
-	return answer;
+	for (int i = 0; i < occupied.size(); i++)
+		if (occupied[i] == cur.first)
+			cur.first = gpath[curRow][curColumn];
+	return cur.first;
 }
 
 void Ghost::okMove(bool n)

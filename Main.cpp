@@ -1,5 +1,6 @@
 #include"Screen.h"
 
+
 bool runLevel(Screen&, Player&, RenderWindow&, Event&, char&);
 Text FinalText;
 Player pacman("pacman", 15, 8, "pacman.png");
@@ -8,15 +9,17 @@ Clock timerP, timerG, fruitTimer, freightTimer;
 vector<RectangleShape> lives;
 Texture liveTexture;
 string gender;
-bool freight=0;
-//SoundBuffer buffer;
-//Sound sound;
+pair<bool, bool> s;
+bool freight =0,cong=1;
+fstream playersData;
+SoundBuffer buffer;
+Sound sound;
 int main()
 {
 	RenderWindow window;
-	/*buffer.loadFromFile("pacman_beginning.wav");
+	buffer.loadFromFile("pacman_beginning.wav");
 	sound.setBuffer(buffer);
-	sound.play();*/
+	sound.play();
 	Font font;
 	font.loadFromFile("aerial.ttf");
 	Text Ready; Ready.setString("Ready!");
@@ -27,13 +30,13 @@ int main()
 	FinalText.setCharacterSize(60);
 	FinalText.setPosition(Vector2f(70, 70 + 10 * 32));
 	FinalText.setFillColor(Color::White); FinalText.setFont(font);
-	Text choosePlayer; 
-	choosePlayer.setString("1) Pacman OR 2) Ms Pacman ?");
-	choosePlayer.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32)); 
-	choosePlayer.setCharacterSize(23);
-	choosePlayer.setFillColor(Color::White); 
-	choosePlayer.setFont(font);
-	Text chooseLevel;  
+	Text chooseAvatar;
+	chooseAvatar.setString("1) Pacman OR 2) Ms Pacman ?");
+	chooseAvatar.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32));
+	chooseAvatar.setCharacterSize(23);
+	chooseAvatar.setFillColor(Color::White);
+	chooseAvatar.setFont(font);
+	Text chooseLevel;
 	chooseLevel.setString("1)Easy  2)Medium  3)Hard");
 	chooseLevel.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32));
 	chooseLevel.setCharacterSize(23);
@@ -43,9 +46,9 @@ int main()
 
 
 	ghosts[0].setGhost("blinky", 7, 8, "blinky.png", "blinky2.png", "blinky3.png", true, true);//setting Blinky above the ghost house and prepared to move at the beginning of the game
-	ghosts[1].setGhost("pinky", 9, 8, "pinky.png", "pinky2.png", "pinky3.png", true,true);//setting Pinky int the middle of the ghost house and prepared to move at the beginning of the game
-	ghosts[2].setGhost("inky", 9, 7, "inky.png", "inky2.png", "inky3.png", false,false);//setting Inky in the left of the ghost house and wouldn't start moving at the beginning of the game
-	ghosts[3].setGhost("clyde", 9, 9, "clyde.png", "clyde2.png", "clyde3.png", false,false);//setting Clyde in the left of the ghost house and wouldn't start moving at the beginning of the game
+	ghosts[1].setGhost("pinky", 9, 8, "pinky.png", "pinky2.png", "pinky3.png", true, true);//setting Pinky int the middle of the ghost house and prepared to move at the beginning of the game
+	ghosts[2].setGhost("inky", 9, 7, "inky.png", "inky2.png", "inky3.png", false, false);//setting Inky in the left of the ghost house and wouldn't start moving at the beginning of the game
+	ghosts[3].setGhost("clyde", 9, 9, "clyde.png", "clyde2.png", "clyde3.png", false, false);//setting Clyde in the left of the ghost house and wouldn't start moving at the beginning of the game
 
 	pacman.addSnapshots("pacman.png", "pacman2.png", "pacman3.png");
 
@@ -66,8 +69,17 @@ int main()
 	char movement = ' ';
 
 	bool gameOn = false;//If the game is working
-	bool playerChosen = false;//If the player has chosen which avatar to play with
+	bool avatarChosen = false;//If the player has chosen which avatar to play with
 	bool isLevelChosen = false;
+	bool playerChosen = false;
+	int eva = 0;
+
+	playersData.open("players.txt");
+	if (playersData.fail())
+	{
+		cout << "Couldn't retrieve doctors data\n";
+		exit(1);
+	}
 
 	while (window.isOpen())
 	{
@@ -76,19 +88,21 @@ int main()
 				if (e.type == Event::Closed)
 					window.close();
 				else if (e.type == Event::KeyPressed)
-					if (!playerChosen) {
+					if (!avatarChosen) 
+					{
 						if (e.key.code == Keyboard::Numpad1 || e.key.code == Keyboard::Num1)
 						{
-							gender ="man";
+							gender = "man";
 							pacman.setImage("pacman.png");
 							pacman.addSnapshots("pacman.png", "pacman2.png", "pacman3.png");
-							playerChosen = true;}
+							avatarChosen = true;
+						}
 						else if (e.key.code == Keyboard::Num2 || e.key.code == Keyboard::Numpad2)
 						{
 							gender = "girl";
 							pacman.setImage("mspacman.png");
 							pacman.addSnapshots("mspacman.png", "mspacman2.png", "mspacman3.png");
-							playerChosen = true;
+							avatarChosen = true;
 						}
 					}
 					else if (!isLevelChosen) {
@@ -114,8 +128,8 @@ int main()
 			window.clear();
 			myScreen.drawAll(window);
 
-			if (!playerChosen)
-				window.draw(choosePlayer);
+			if (!avatarChosen)
+				window.draw(chooseAvatar);
 			else if (!isLevelChosen)
 				window.draw(chooseLevel);
 			else
@@ -132,7 +146,7 @@ int main()
 
 			if (!gameOn) {
 				window.draw(FinalText);
-				playerChosen = false;
+				avatarChosen = false;
 				isLevelChosen = false;
 				pacman.restart();
 				for (int i = 0; i < 4; i++)
@@ -205,41 +219,57 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 		}
 	}
 	if (timerP.getElapsedTime().asMilliseconds() > 200) {
-		if (!myScreen.updatePac(movement))
+
+		s = myScreen.updatePac(movement);
+		cong = s.first;
+		
+		if (cong)
 		{
-			/*buffer.loadFromFile("cong.wav");
+			buffer.loadFromFile("cong.wav");
 			sound.setBuffer(buffer);
-			sound.play();*/
+			sound.play();
 			FinalText.setString("Congratulations");
 			return false;
 		}
-		if (myScreen.ghostCollision())
-		{
-			if (!pacman.loseLive())
-			{
-				///*buffer.loadFromFile("pacman_death.wav");
-				//sound.setBuffer(buffer);*/
-				//sound.play();
-				FinalText.setString("GameOver!!");
-				return false;
-			}
-			movement = ' ';
-		}
-		if (myScreen.isFruitEaten())
+		if (s.second)
 		{
 			freight = 1;
 			for (int i = 0; i < 4; i++)
 				ghosts[i].freightMode();
 		}
-		
+		if (myScreen.ghostCollision())
+		{
+			if (freight)
+			{
+				pacman.increaseScore(100);
+
+			}
+			else
+			{
+				if (!pacman.loseLive())
+				{
+					buffer.loadFromFile("pacman_death.wav");
+					sound.setBuffer(buffer);
+					sound.play();
+					FinalText.setString("GameOver!!");
+					return false;
+				}
+				for (int i = 0; i < 4; i++)
+					ghosts[i].restart();
+			}
+			
+			movement = ' ';
+		}
+	
+
 		timerP.restart();
 	}
-	if (timerG.getElapsedTime().asMilliseconds() > 400 - 80 * myScreen.getLevel()) {
+	if (timerG.getElapsedTime().asMilliseconds() > 500 - 80 * myScreen.getLevel()) {
 
 		myScreen.updateGhosts(freight);
-		if(freight)
+		if (freight)
 		{
-			if (freightTimer.getElapsedTime().asSeconds() > 3)
+			if (freightTimer.getElapsedTime().asSeconds() > 7)
 			{
 				freight = 0;
 				for (int i = 0; i < 4; i++)
@@ -247,20 +277,28 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 			}
 
 		}
-		freightTimer.restart();
+		else
+			freightTimer.restart();
 		if (myScreen.ghostCollision())
 		{
-
-			if (!pacman.loseLive())
+			if (freight)
 			{
-				/*buffer.loadFromFile("pacman_death.wav");
-				sound.setBuffer(buffer);
-				sound.play();*/
-				FinalText.setString("GameOver!!");
-				return false;
+				pacman.increaseScore(100);
+				
 			}
-			for (int i = 0; i < 4; i++)
-				ghosts[i].restart();
+			else
+			{
+				if (!pacman.loseLive())
+				{
+					/*buffer.loadFromFile("pacman_death.wav");
+					sound.setBuffer(buffer);
+					sound.play();*/
+					FinalText.setString("GameOver!!");
+					return false;
+				}
+				for (int i = 0; i < 4; i++)
+					ghosts[i].restart();
+			}
 			movement = ' ';
 		}
 		timerG.restart();

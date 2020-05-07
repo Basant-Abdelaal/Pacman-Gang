@@ -72,7 +72,7 @@ Screen::Screen(Player& pac, Ghost G[4])
 	fruit[1].setTexture(&fruit2);
 	fruit[2].setPosition(64 + 32, 64 + 32 * 9);
 	fruit[2].setTexture(&fruit3);
-	fruit[3].setPosition(64 + 32*15, 64 + 32 * 9);
+	fruit[3].setPosition(64 + 32 * 15, 64 + 32 * 9);
 	fruit[3].setTexture(&fruit4);
 	fruit[4].setPosition(64 + 32 * 5, 64 + 32 * 7);
 	fruit[4].setTexture(&fruit5);
@@ -85,19 +85,31 @@ Screen::Screen(Player& pac, Ghost G[4])
 
 void Screen::updateGhosts(bool freight)
 {
-	if(!freight)
-	{
-		for (int i = 0; i < 4; i++) 
-			ghosts[i].move(ghosts[i].getDirection(pacman->getRow(), pacman->getColumn()));
-	}
+	vector<int> n;
+	n.clear();
+	int node;
+	if (!freight)
+		for (int i = 0; i < 4; i++)
+		{
+			node = ghosts[i].getDirection(pacman->getRow(), pacman->getColumn(),n);
+			ghosts[i].move(node);
+			n.push_back(node);
+		}
+
 	else
 		for (int i = 0; i < 4; i++)
-			ghosts[i].move(ghosts[i].getFreightDirection(pacman->getRow(), pacman->getColumn()));
+		{
+			node = ghosts[i].getFreightDirection(n);
+			ghosts[i].move(node);
+			n.push_back(node);
+		}
 }
 
 
-bool Screen::updatePac(char& m)
+pair<bool,bool> Screen::updatePac(char& m)
 {
+	pair<bool, bool> ans;
+	ans.second = 0;
 	int newRow = pacman->getRow(), newColumn = pacman->getColumn(); //for pac
 	switch (m)
 	{
@@ -140,7 +152,7 @@ bool Screen::updatePac(char& m)
 		{
 			pacman->increaseScore(50);
 			score.setString(pacman->getScore());
-			//freight mode
+			ans.second = 1;  //freight mode
 			pelletsNum--;
 		}
 		pellets[newRow][newColumn] = 0;
@@ -150,7 +162,7 @@ bool Screen::updatePac(char& m)
 	if (fruitAdded) {
 		if (pacman->getShape().getGlobalBounds().intersects(fruit[fruitOrder].getGlobalBounds())) {
 			fruitAdded = false;
-			pacman->increaseScore(250*(fruitOrder+1));
+			pacman->increaseScore(250 * (fruitOrder + 1));
 			score.setString(pacman->getScore());
 
 			fruitOrder = (fruitOrder + 1) % fruit.size();
@@ -162,16 +174,18 @@ bool Screen::updatePac(char& m)
 		clydeTimer.restart();
 	}
 	else if (pelletsNum < 60) {
-		if(clydeTimer.getElapsedTime().asSeconds()>10)
+		if (clydeTimer.getElapsedTime().asSeconds() > 10)
 			ghosts[3].okMove(true);
 	}
 
 	if (pelletsNum == 0)
 	{
-		return 0;
+		ans.first = 1;
 	}
+	else
+		ans.first = 0;
 
-	return 1;
+	return ans;
 }
 
 bool Screen::ghostCollision()
@@ -179,7 +193,10 @@ bool Screen::ghostCollision()
 	bool flag = false;
 	for (int i = 0; i < 4; i++)
 		if (ghosts[i].getShape().getGlobalBounds().intersects(pacman->getShape().getGlobalBounds()))
+		{
 			flag = true;
+			ghosts[i].restart();
+		}
 	return flag;
 }
 
@@ -204,7 +221,7 @@ void Screen::drawAll(RenderWindow& win)
 	win.draw(levelText);
 	win.draw(levelHeader);
 	win.draw(highScoreHeader);
-	
+
 }
 
 void Screen::setLevel(int n) {
@@ -276,10 +293,3 @@ void Screen::addFruit() {
 	fruitAdded = true;
 }
 
-bool Screen::isFruitEaten()
-{
-	if (fruit[fruitOrder].getGlobalBounds().intersects(pacman->getShape().getGlobalBounds()))
-		return true;
-	else
-		return false;
-}

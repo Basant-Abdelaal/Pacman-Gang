@@ -13,10 +13,10 @@ private:
 	int level;
 	int pellets[row][col];
 	RectangleShape board[row][col];
-	Player *pacman;
+	Player* pacman;
 	Ghost* ghosts;
 	Font font;
-	Text scoreHeader, highScoreHeader, levelHeader, score, levelText;
+	Text scoreHeader, highScoreHeader, levelHeader, score, levelText, playerHeader;
 	int pelletsNum;
 	Texture bricks, small_p, big_p, space, fruit1, fruit2, fruit3, fruit4, fruit5, fruit6;
 	vector <RectangleShape> fruit;
@@ -28,7 +28,7 @@ private:
 	Sound s;*/
 public:
 	Screen(Player& pac, Ghost[4]);
-	bool updatePac(char&);
+	pair<bool,bool> updatePac(char&);
 	void updateGhosts(bool freight);
 	bool ghostCollision();
 	void drawAll(RenderWindow&);
@@ -36,7 +36,6 @@ public:
 	int getLevel() { return level; }
 	void addFruit();
 	bool isFruitAdded() { return fruitAdded; }
-	bool isFruitEaten();
 };
 
 

@@ -8,7 +8,7 @@ Object::Object() {
 	initialRow = 0;
 }
 
-Object::Object(string n, int initialR, int initialC, string imagename) 
+Object::Object(string n, int initialR, int initialC, string imagename)
 {
 	name = n;
 	curRow = initialR;
@@ -21,18 +21,18 @@ Object::Object(string n, int initialR, int initialC, string imagename)
 	shape.setSize(Vector2f(32, 32));
 }
 
-int Object::getRow() 
+int Object::getRow()
 {
-	
+
 	return curRow;
 }
 
-int Object::getColumn() 
+int Object::getColumn()
 {
 	return curColumn;
 }
 
-void Object::drawOnWindow(RenderWindow& win) 
+void Object::drawOnWindow(RenderWindow& win)
 {
 	shape.setPosition(Vector2f(curHorizontal, curVertical));
 	win.draw(shape);
