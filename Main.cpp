@@ -1,5 +1,5 @@
 #include"Screen.h"
-
+#include<sstream>
 
 bool runLevel(Screen&, Player&, RenderWindow&, Event&, char&);
 Text FinalText;
@@ -12,16 +12,29 @@ string gender;
 pair<bool, bool> s;
 bool freight =0,cong=1;
 fstream playersData;
-SoundBuffer buffer;
-Sound sound;
+vector<pair<string, int>> players;
+pair<string, int> myPlayer; //the player who is playing
+vector<Text> playerText;
+bool flag = 0; //to get the data to the Text vector 1 time
+
+
+bool sortbysec(const pair<string, int>& a,
+	const pair<string, int>& b)
+{
+	return (a.second > b.second);
+}
+
+//SoundBuffer buffer;
+//Sound sound;
 int main()
 {
 	RenderWindow window;
-	buffer.loadFromFile("pacman_beginning.wav");
+	/*buffer.loadFromFile("pacman_beginning.wav");
 	sound.setBuffer(buffer);
-	sound.play();
+	sound.play();*/
 	Font font;
 	font.loadFromFile("aerial.ttf");
+	Text temp;
 	Text Ready; Ready.setString("Ready!");
 	Ready.setPosition(Vector2f(55 + 7 * 32, 62 + 11 * 32));
 	Ready.setCharacterSize(28);
@@ -30,6 +43,19 @@ int main()
 	FinalText.setCharacterSize(60);
 	FinalText.setPosition(Vector2f(70, 70 + 10 * 32));
 	FinalText.setFillColor(Color::White); FinalText.setFont(font);
+	Text choosePlayer;
+	choosePlayer.setString("1) New Player OR 2) Existing Player ?");
+	choosePlayer.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32));
+	choosePlayer.setCharacterSize(23);
+	choosePlayer.setFillColor(Color::White);
+	choosePlayer.setFont(font);
+	Text newPlayer;
+	string newP = "Enter a name: ";
+	newPlayer.setString(newP);
+	newPlayer.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32));
+	newPlayer.setCharacterSize(23);
+	newPlayer.setFillColor(Color::White);
+	newPlayer.setFont(font);
 	Text chooseAvatar;
 	chooseAvatar.setString("1) Pacman OR 2) Ms Pacman ?");
 	chooseAvatar.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32));
@@ -80,14 +106,161 @@ int main()
 		cout << "Couldn't retrieve doctors data\n";
 		exit(1);
 	}
+	string str;  int score; //name & score of player
+	stringstream ss;
 
+	while (!playersData.eof())
+	{
+		getline(playersData, str);
+		ss.clear();
+		ss = stringstream(str);
+		str.clear();
+		while (ss >> str && ss>>score)
+		{
+			players.push_back(make_pair(str, score));
+			str.clear();
+		}
+	}
+	playersData.close();
+	sort(players.begin(), players.begin() + players.size(), sortbysec);
+	//cout << "players size is " << players.size() << endl;
 	while (window.isOpen())
 	{
+		while (!eva)
+		{
+			while (window.pollEvent(e))
+				if (e.type == Event::Closed)
+					window.close();
+
+				else if (e.type == Event::KeyPressed)
+					if (e.key.code == Keyboard::Numpad1 || e.key.code == Keyboard::Num1)
+						eva = 1;
+					else if (e.key.code == Keyboard::Num2 || e.key.code == Keyboard::Numpad2)
+						eva = 2;
+					
+				
+			for (int i = 0; i < 4; i++)
+				ghosts[i].updateAnimation();
+			pacman.updateAnimation();
+
+			window.clear();
+			myScreen.drawAll(window);
+
+			window.draw(choosePlayer);
+			
+			window.display();
+		}
+		while (!playerChosen && eva==1)
+		{
+			while (window.pollEvent(e))
+				if (e.type == Event::Closed)
+					window.close();
+				else if (e.type == Event::KeyPressed && e.key.code == Keyboard::Enter)
+				{
+					playerChosen = 1;
+					myPlayer.first = str;
+					myPlayer.second = 0;
+					if (players.size() >= 5)
+						players[4] = myPlayer;
+					else
+						players.push_back(myPlayer);
+					myScreen.setHighScore(0);
+				}
+				else if (e.type == sf::Event::TextEntered)
+				{
+					//cout << "Text\n";
+					if (e.text.unicode < 128)
+						str += (char)e.text.unicode;
+					newP += (char)e.text.unicode;
+					newPlayer.setString(newP);
+				}
+				//else
+					//playerChosen = 1;
+			for (int i = 0; i < 4; i++)
+				ghosts[i].updateAnimation();
+			pacman.updateAnimation();
+
+			window.clear();
+			myScreen.drawAll(window);
+
+			window.draw(newPlayer); //cout << str << endl;
+
+			window.display();
+		}
+
+		while (!playerChosen && eva == 2)
+		{
+			//cout << "Here\n";
+			if (!flag)
+			{
+				for (int i = 0; i < players.size(); i++)
+				{
+					str.clear();
+					str += to_string(i+1);
+					str += ' ';
+					str += players[i].first;
+					//str += ' ';
+					//str += to_string(players[i].second);
+					temp.setString(str);
+					temp.setPosition(Vector2f(100 + 2 * 32, 62 + (11+i) * 32));
+					temp.setCharacterSize(23);
+					temp.setFillColor(Color::White);
+					temp.setFont(font);
+					playerText.push_back(temp);
+				}
+				flag = 1;
+			}
+
+			while (window.pollEvent(e))
+				if (e.type == Event::Closed)
+					window.close();
+				else if (e.type == Event::KeyPressed)
+				{
+					if ((e.key.code == Keyboard::Num1 || e.key.code == Keyboard::Numpad1) && players.size() >= 1) {
+						myPlayer = players[0];
+						myScreen.setHighScore(players[0].second);
+						playerChosen = 1;
+					}
+					else if ((e.key.code == Keyboard::Num2 || e.key.code == Keyboard::Numpad2) && players.size() >= 2) {
+						myPlayer = players[1];
+						myScreen.setHighScore(players[1].second);
+						playerChosen = 1;
+					}
+					else if ((e.key.code == Keyboard::Num3 || e.key.code == Keyboard::Numpad3) && players.size() >= 3) {
+						myPlayer = players[2];
+						myScreen.setHighScore(players[2].second);
+						playerChosen = 1;
+					}
+					else if ((e.key.code == Keyboard::Num4 || e.key.code == Keyboard::Numpad4) && players.size() >= 4) {
+						myPlayer = players[3];
+						myScreen.setHighScore(players[3].second);
+						playerChosen = 1;
+					}
+					else if ((e.key.code == Keyboard::Num5 || e.key.code == Keyboard::Numpad5) && players.size()>=5) {
+						myPlayer = players[4];
+						myScreen.setHighScore(players[4].second);
+						playerChosen = 1;
+					}
+				}
+
+			for (int i = 0; i < 4; i++)
+				ghosts[i].updateAnimation();
+			pacman.updateAnimation();
+
+			window.clear();
+			myScreen.drawAll(window);
+			for (int i = 0; i < playerText.size(); i++)
+				window.draw(playerText[i]);
+			window.display();
+		}
+
+
 		while (!gameOn) {
 			while (window.pollEvent(e))
 				if (e.type == Event::Closed)
 					window.close();
 				else if (e.type == Event::KeyPressed)
+					
 					if (!avatarChosen) 
 					{
 						if (e.key.code == Keyboard::Numpad1 || e.key.code == Keyboard::Num1)
@@ -225,10 +398,25 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 		
 		if (cong)
 		{
-			buffer.loadFromFile("cong.wav");
+			/*buffer.loadFromFile("cong.wav");
 			sound.setBuffer(buffer);
-			sound.play();
+			sound.play();*/
 			FinalText.setString("Congratulations");
+			if (pacman.getScoreInt() > myPlayer.second)
+			{
+				myPlayer.second = pacman.getScoreInt();
+				myScreen.setHighScore(myPlayer.second);
+				for (int i = 0; i < players.size(); i++)
+					if (players[i].first == myPlayer.first)
+						players[i].second = myPlayer.second;
+			}
+			playersData.open("players.txt");
+			for (int i = 0; i < players.size(); i++)
+			{
+				playersData << players[i].first << " " << to_string(players[i].second);
+				if (i < players.size() - 1)
+					playersData << endl;
+			}
 			return false;
 		}
 		if (s.second)
@@ -248,10 +436,25 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 			{
 				if (!pacman.loseLive())
 				{
-					buffer.loadFromFile("pacman_death.wav");
+					/*buffer.loadFromFile("pacman_death.wav");
 					sound.setBuffer(buffer);
-					sound.play();
+					sound.play();*/
 					FinalText.setString("GameOver!!");
+					if (pacman.getScoreInt() > myPlayer.second)
+					{
+						myPlayer.second = pacman.getScoreInt();
+						myScreen.setHighScore(myPlayer.second);
+						for (int i = 0; i < players.size(); i++)
+							if (players[i].first == myPlayer.first)
+								players[i].second = myPlayer.second;
+					}
+					playersData.open("players.txt");
+					for (int i = 0; i < players.size(); i++)
+					{
+						playersData << players[i].first << " " << to_string(players[i].second);
+						if (i < players.size() - 1)
+							playersData << endl;
+					}
 					return false;
 				}
 				for (int i = 0; i < 4; i++)
@@ -294,6 +497,21 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 					sound.setBuffer(buffer);
 					sound.play();*/
 					FinalText.setString("GameOver!!");
+					if (pacman.getScoreInt() > myPlayer.second)
+					{
+						myPlayer.second = pacman.getScoreInt();
+						myScreen.setHighScore(myPlayer.second);
+						for (int i = 0; i < players.size(); i++)
+							if (players[i].first == myPlayer.first)
+								players[i].second = myPlayer.second;
+					}
+					playersData.open("players.txt");
+					for (int i = 0; i < players.size(); i++)
+					{
+						playersData << players[i].first << " " << to_string(players[i].second);
+						if (i < players.size() - 1)
+							playersData << endl;
+					}
 					return false;
 				}
 				for (int i = 0; i < 4; i++)

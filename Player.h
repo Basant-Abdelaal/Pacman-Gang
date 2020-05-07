@@ -11,6 +11,7 @@ private:
 public:
 	Player(string n, int initialR, int initialC, string imagename);
 	string getScore();
+	int getScoreInt();
 	int getLives();
 	//void increaseLives();
 	bool loseLive();

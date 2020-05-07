@@ -83,6 +83,13 @@ Screen::Screen(Player& pac, Ghost G[4])
 
 }
 
+void Screen::setHighScore(int n)
+{
+	string str = to_string(n);
+	highScore.setString(str); highScore.setPosition(Vector2f(32 * 6, 32)); highScore.setCharacterSize(27); highScore.setFillColor(Color::White); highScore.setFont(font);
+
+}
+
 void Screen::updateGhosts(bool freight)
 {
 	vector<int> n;
@@ -221,7 +228,7 @@ void Screen::drawAll(RenderWindow& win)
 	win.draw(levelText);
 	win.draw(levelHeader);
 	win.draw(highScoreHeader);
-
+	win.draw(highScore);
 }
 
 void Screen::setLevel(int n) {

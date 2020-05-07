@@ -14,6 +14,13 @@ string Player::getScore()
 
 }
 
+int Player::getScoreInt()
+{
+	
+	return score;
+
+}
+
 int Player::getLives()
 {
 	return lives;
