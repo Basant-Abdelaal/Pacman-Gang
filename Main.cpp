@@ -139,6 +139,7 @@ int main()
 		temp.setFont(font);
 		playerText.push_back(temp);
 	}
+	str.clear();
 	//cout << "players size is " << players.size() << endl;
 	while (window.isOpen())
 	{
