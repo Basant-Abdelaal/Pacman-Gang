@@ -20,19 +20,20 @@ Ghost::Ghost() :Object() {
 	for (int i = 0; i < row; i++)
 		for (int j = 0; j < col; j++)
 		{
-			if (gpath[i][j] == -1)
+			if (gpath[i][j] == -1) //if a wall
 				continue;
 			node = gpath[i][j];
 			for (int k = 0; k < 4; k++)
 			{
 				r = i + dx[k]; c = j + dy[k];
-				if (r >= 0 && r < row && c >= 0 && c < col)
+				if (r >= 0 && r < row && c >= 0 && c < col) //Not out of boundaries
 				{
 					graph[node].push_back(gpath[r][c]);
 				}
 			}
 		}
-	graph[71].push_back(85);
+	//To connect the left gate with the right gate
+	graph[71].push_back(85); 
 	graph[85].push_back(71);
 	initialRow = 0;
 	initialColumn = 0;
@@ -195,41 +196,41 @@ void Ghost::unFreight() //To go out of freight mode
 
 int Ghost::getDirection(int  x, int y, vector<int> occupied)
 {
-	queue<pair<int, int> >q;
-	q.push(make_pair(gpath[curRow][curColumn], 0));
+	queue<pair<int, int> >q;  //bfs queue<position node, level>
+	q.push(make_pair(gpath[curRow][curColumn], 0)); //starting from the node of the ghost
 	pair<int, int> cur;
 	memset(cost, -1, sizeof cost);
 	while (q.size())
 	{
 		cur = q.front();
 		q.pop();
-		if (cost[cur.first] != -1) continue;
+		if (cost[cur.first] != -1) continue;  //node is visited already
 		cost[cur.first] = cur.second;
-		if (cur.first == gpath[x][y])
+		if (cur.first == gpath[x][y])  //if pacman is found
 			break;
-		for (int i = 0; i < graph[cur.first].size(); i++)
+		for (int i = 0; i < graph[cur.first].size(); i++) //loop on the adjacent nodes
 		{
-			if (cost[graph[cur.first][i]] == -1)
+			if (cost[graph[cur.first][i]] == -1) //if not visited, then push in the queue
 				q.push(make_pair(graph[cur.first][i], cur.second + 1));
 		}
 	}
 	while (q.size())
 		q.pop();
-	q.push(cur);
+	q.push(cur); //push pacman to the queue
 	while (q.size())
 	{
 		cur = q.front();
 		q.pop();
 		if (cur.second == 1)
 			break;
-		for (int i = 0; i < graph[cur.first].size(); i++)
-			if (cost[graph[cur.first][i]] == cur.second - 1)
+		for (int i = 0; i < graph[cur.first].size(); i++)  //loop on the adjacent node
+			if (cost[graph[cur.first][i]] == cur.second - 1) //if it is less than the level by 1, push it to the queue
 				q.push(make_pair(graph[cur.first][i], cur.second - 1));
 	}
 	for (int i = 0; i < occupied.size(); i++)
 		if (occupied[i] == cur.first)
 			cur.first = gpath[curRow][curColumn];
-	return cur.first;
+	return cur.first; 
 }
 
 //Get the node that the ghost should go next in fright mode

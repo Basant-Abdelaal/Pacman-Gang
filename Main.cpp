@@ -14,7 +14,6 @@ fstream playersData;
 vector<pair<string, int>> players;
 pair<string, int> myPlayer; //the player who is playing
 vector<Text> playerText;
-bool flag = 0; //to get the data to the Text vector 1 time
 
 
 bool sortbysec(const pair<string, int>& a,
@@ -125,7 +124,21 @@ int main()
 		}
 	}
 	playersData.close();
-	sort(players.begin(), players.begin() + players.size(), sortbysec);
+	sort(players.begin(), players.end(), sortbysec);
+
+	for (int i = 0; i < players.size(); i++)
+	{
+		str.clear();
+		str += to_string(i + 1);
+		str += ' ';
+		str += players[i].first;
+		temp.setString(str);
+		temp.setPosition(Vector2f(100 + 2 * 32, 62 + (11 + i) * 32));
+		temp.setCharacterSize(23);
+		temp.setFillColor(Color::White);
+		temp.setFont(font);
+		playerText.push_back(temp);
+	}
 	//cout << "players size is " << players.size() << endl;
 	while (window.isOpen())
 	{
@@ -171,18 +184,16 @@ int main()
 						players[4] = myPlayer;
 					else
 						players.push_back(myPlayer);
-					myScreen.setHighScore(0);
+					myScreen.setHighScore(players[0].second);
 				}
 				else if (e.type == sf::Event::TextEntered)
 				{
-					//cout << "Text\n";
 					if (e.text.unicode < 128)
 						str += (char)e.text.unicode;
-					newP += (char)e.text.unicode;
-					newPlayer.setString(newP);
+					//newP += (char)e.text.unicode;
+					newPlayer.setString(newP+str);
 				}
-				//else
-					//playerChosen = 1;
+				
 			for (int i = 0; i < 4; i++)
 				ghosts[i].updateAnimation(0);
 			pacman.updateAnimation(pacman.dir);
@@ -198,23 +209,7 @@ int main()
 		//If he is an existing player then display the current list of players and save his choice
 		while (!playerChosen && option == 2)
 		{
-			if (!flag)
-			{
-				for (int i = 0; i < players.size(); i++)
-				{
-					str.clear();
-					str += to_string(i+1);
-					str += ' ';
-					str += players[i].first;
-					temp.setString(str);
-					temp.setPosition(Vector2f(100 + 2 * 32, 62 + (11+i) * 32));
-					temp.setCharacterSize(23);
-					temp.setFillColor(Color::White);
-					temp.setFont(font);
-					playerText.push_back(temp);
-				}
-				flag = 1;
-			}
+			
 
 			while (window.pollEvent(e))
 				if (e.type == Event::Closed)
@@ -228,22 +223,22 @@ int main()
 					}
 					else if ((e.key.code == Keyboard::Num2 || e.key.code == Keyboard::Numpad2) && players.size() >= 2) {
 						myPlayer = players[1];
-						myScreen.setHighScore(players[1].second);
+						myScreen.setHighScore(players[0].second);
 						playerChosen = 1;
 					}
 					else if ((e.key.code == Keyboard::Num3 || e.key.code == Keyboard::Numpad3) && players.size() >= 3) {
 						myPlayer = players[2];
-						myScreen.setHighScore(players[2].second);
+						myScreen.setHighScore(players[0].second);
 						playerChosen = 1;
 					}
 					else if ((e.key.code == Keyboard::Num4 || e.key.code == Keyboard::Numpad4) && players.size() >= 4) {
 						myPlayer = players[3];
-						myScreen.setHighScore(players[3].second);
+						myScreen.setHighScore(players[0].second);
 						playerChosen = 1;
 					}
 					else if ((e.key.code == Keyboard::Num5 || e.key.code == Keyboard::Numpad5) && players.size()>=5) {
 						myPlayer = players[4];
-						myScreen.setHighScore(players[4].second);
+						myScreen.setHighScore(players[0].second);
 						playerChosen = 1;
 					}
 				}
@@ -386,7 +381,7 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 			if (pacman.getScoreInt() > myPlayer.second)
 			{
 				myPlayer.second = pacman.getScoreInt();
-				myScreen.setHighScore(myPlayer.second);
+				//myScreen.setHighScore(myPlayer.second);
 				for (int i = 0; i < players.size(); i++)
 					if (players[i].first == myPlayer.first)
 						players[i].second = myPlayer.second;
@@ -424,7 +419,7 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 					if (pacman.getScoreInt() > myPlayer.second)
 					{
 						myPlayer.second = pacman.getScoreInt();
-						myScreen.setHighScore(myPlayer.second);
+						//myScreen.setHighScore(myPlayer.second);
 						for (int i = 0; i < players.size(); i++)
 							if (players[i].first == myPlayer.first)
 								players[i].second = myPlayer.second;
@@ -481,7 +476,7 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 					if (pacman.getScoreInt() > myPlayer.second)
 					{
 						myPlayer.second = pacman.getScoreInt();
-						myScreen.setHighScore(myPlayer.second);
+						//myScreen.setHighScore(myPlayer.second);
 						for (int i = 0; i < players.size(); i++)
 							if (players[i].first == myPlayer.first)
 								players[i].second = myPlayer.second;
