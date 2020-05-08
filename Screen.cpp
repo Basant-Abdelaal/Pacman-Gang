@@ -155,8 +155,8 @@ pair<bool,bool> Screen::updatePac(char& m)
 		if (pellets[newRow][newColumn] == 1)
 		{
 			eat.loadFromFile("pacman_chomp.wav");
-			s.setBuffer(eat);
-			s.play();
+			eatSound.setBuffer(eat);
+			eatSound.play();
 			pacman->increaseScore(10);
 			score.setString(pacman->getScore());
 			pelletsNum--;

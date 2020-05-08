@@ -47,13 +47,12 @@ int main()
 	choosePlayer.setCharacterSize(23);
 	choosePlayer.setFillColor(Color::White);
 	choosePlayer.setFont(font);
-	Text newPlayer;
-	string newP = "Enter a name: ";
-	newPlayer.setString(newP);
-	newPlayer.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32));
-	newPlayer.setCharacterSize(23);
-	newPlayer.setFillColor(Color::White);
-	newPlayer.setFont(font);
+	Text enterNameText;
+	enterNameText.setString("Enter a name: ");
+	enterNameText.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32));
+	enterNameText.setCharacterSize(23);
+	enterNameText.setFillColor(Color::White);
+	enterNameText.setFont(font);
 	Text chooseAvatar;
 	chooseAvatar.setString("1) Pacman OR 2) Ms Pacman ?");
 	chooseAvatar.setPosition(Vector2f(55 + 2 * 32, 62 + 11 * 32));
@@ -140,6 +139,9 @@ int main()
 		playerText.push_back(temp);
 	}
 	str.clear();
+
+	myScreen.setHighScore(players[0].second);
+
 	//cout << "players size is " << players.size() << endl;
 	while (window.isOpen())
 	{
@@ -163,7 +165,7 @@ int main()
 
 			window.clear();
 			myScreen.drawAll(window);
-
+			myScreen.setHighScore(players[0].second);
 			window.draw(choosePlayer);
 			
 			window.display();
@@ -181,18 +183,12 @@ int main()
 					playerChosen = 1;
 					myPlayer.first = str;
 					myPlayer.second = 0;
-					if (players.size() >= 5)
-						players[4] = myPlayer;
-					else
-						players.push_back(myPlayer);
-					myScreen.setHighScore(players[0].second);
 				}
 				else if (e.type == sf::Event::TextEntered)
 				{
 					if (e.text.unicode < 128)
 						str += (char)e.text.unicode;
-					//newP += (char)e.text.unicode;
-					newPlayer.setString(newP+str);
+					enterNameText.setString("Enter a name: " +str);
 				}
 				
 			for (int i = 0; i < 4; i++)
@@ -201,8 +197,8 @@ int main()
 
 			window.clear();
 			myScreen.drawAll(window);
-
-			window.draw(newPlayer); //cout << str << endl;
+			myScreen.setHighScore(players[0].second);
+			window.draw(enterNameText); //cout << str << endl;
 
 			window.display();
 		}
@@ -252,6 +248,7 @@ int main()
 			myScreen.drawAll(window);
 			for (int i = 0; i < playerText.size(); i++)
 				window.draw(playerText[i]);
+			myScreen.setHighScore(players[0].second);
 			window.display();
 		}
 
@@ -306,6 +303,7 @@ int main()
 				window.draw(chooseLevel);
 			else
 				window.draw(Ready);
+			myScreen.setHighScore(players[0].second);
 			window.display();
 		}
 
@@ -323,6 +321,21 @@ int main()
 				pacman.restart();
 				for (int i = 0; i < 4; i++)
 					ghosts[i].restart();
+				
+				if (pacman.getScoreInt() > myPlayer.second)
+				{
+					myPlayer.second = pacman.getScoreInt();
+					players.push_back(myPlayer);
+				}
+				sort(players.begin(), players.end(), sortbysec);
+
+				if(players.size()>5)
+					players.resize(5);
+				playersData.open("players.txt");
+				for (int i = 0; i < players.size(); i++)
+				{
+					playersData << players[i].first << " " << to_string(players[i].second) << endl;
+				}
 			}
 			for (int i = 0; i < lives.size(); i++)
 				window.draw(lives[i]);
@@ -379,21 +392,7 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 			sound.setBuffer(buffer);
 			sound.play();
 			FinalText.setString("Congratulations");
-			if (pacman.getScoreInt() > myPlayer.second)
-			{
-				myPlayer.second = pacman.getScoreInt();
-				//myScreen.setHighScore(myPlayer.second);
-				for (int i = 0; i < players.size(); i++)
-					if (players[i].first == myPlayer.first)
-						players[i].second = myPlayer.second;
-			}
-			playersData.open("players.txt");
-			for (int i = 0; i < players.size(); i++)
-			{
-				playersData << players[i].first << " " << to_string(players[i].second);
-				if (i < players.size() - 1)
-					playersData << endl;
-			}
+			
 			return false;
 		}
 		if (s.second)
@@ -417,21 +416,6 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 					sound.setBuffer(buffer);
 					sound.play();
 					FinalText.setString("GameOver!!");
-					if (pacman.getScoreInt() > myPlayer.second)
-					{
-						myPlayer.second = pacman.getScoreInt();
-						//myScreen.setHighScore(myPlayer.second);
-						for (int i = 0; i < players.size(); i++)
-							if (players[i].first == myPlayer.first)
-								players[i].second = myPlayer.second;
-					}
-					playersData.open("players.txt");
-					for (int i = 0; i < players.size(); i++)
-					{
-						playersData << players[i].first << " " << to_string(players[i].second);
-						if (i < players.size() - 1)
-							playersData << endl;
-					}
 					return false;
 				}
 				for (int i = 0; i < 4; i++)
@@ -444,7 +428,7 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 
 		timerP.restart();
 	}
-	if (timerG.getElapsedTime().asMilliseconds() > 500 - 80 * myScreen.getLevel()) {
+	if (timerG.getElapsedTime().asMilliseconds() > 700 - 100 * myScreen.getLevel()) {
 
 		myScreen.updateGhosts(freight);
 		if (freight)
@@ -474,21 +458,6 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 					sound.setBuffer(buffer);
 					sound.play();
 					FinalText.setString("GameOver!!");
-					if (pacman.getScoreInt() > myPlayer.second)
-					{
-						myPlayer.second = pacman.getScoreInt();
-						//myScreen.setHighScore(myPlayer.second);
-						for (int i = 0; i < players.size(); i++)
-							if (players[i].first == myPlayer.first)
-								players[i].second = myPlayer.second;
-					}
-					playersData.open("players.txt");
-					for (int i = 0; i < players.size(); i++)
-					{
-						playersData << players[i].first << " " << to_string(players[i].second);
-						if (i < players.size() - 1)
-							playersData << endl;
-					}
 					return false;
 				}
 				for (int i = 0; i < 4; i++)

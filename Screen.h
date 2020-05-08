@@ -24,7 +24,7 @@ private:
 	bool fruitAdded; //whether to draw a fruit or not
 	Clock clydeTimer; //Timer to know when should clyde move
 	SoundBuffer eat;
-	Sound s;
+	Sound eatSound;
 public:
 	Screen(Player& pac, Ghost[4]);
 	pair<bool,bool> updatePac(char&);
