@@ -5,6 +5,8 @@ Player::Player(string n, int initialR, int initialC, string imagename) :Object(n
 	score = 0;
 	lifeIncrements = 0;
 	lives = 3;
+	dir = Right;
+
 }
 
 string Player::getScore()
@@ -75,4 +77,18 @@ void Player::restart() {
 void Player::setImage(string s) {
 	texture.loadFromFile(s);
 	shape.setTexture(&texture);
+}
+
+void Player::addSnapshots(string str[12]) {
+	snapshot.clear();
+	snapshot.resize(16);
+	for (int i = 0; i < 4; i++)
+	{
+		snapshot[0 + 4 * i].loadFromFile(str[0 + 3 * i]);
+		snapshot[1 + 4 * i].loadFromFile(str[1 + 3 * i]);
+		snapshot[2 + 4 * i].loadFromFile(str[2 + 3 * i]);
+		snapshot[3 + 4 * i].loadFromFile(str[1 + 3 * i]);
+	}
+
+	snapshotIndex = 0;
 }

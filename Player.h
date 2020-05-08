@@ -2,6 +2,11 @@
 #define PLAYER
 #include "Object.h"
 
+enum direction
+{
+	Right = 0, Up = 4, Left = 8, Down = 12
+};
+
 class Player :public Object
 {
 private:
@@ -19,6 +24,8 @@ public:
 	bool checkLiveBonus(); //returns true if score is high enough to increase lives
 	void restart();
 	void setImage(string);
+	void addSnapshots(string str[12]);
+	direction dir;
 };
 
 #endif

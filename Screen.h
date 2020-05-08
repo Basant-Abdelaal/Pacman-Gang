@@ -23,8 +23,8 @@ private:
 	int fruitOrder; //Index to which fruit from the vector would be drawn next
 	bool fruitAdded; //whether to draw a fruit or not
 	Clock clydeTimer; //Timer to know when should clyde move
-	/*SoundBuffer eat;
-	Sound s;*/
+	SoundBuffer eat;
+	Sound s;
 public:
 	Screen(Player& pac, Ghost[4]);
 	pair<bool,bool> updatePac(char&);

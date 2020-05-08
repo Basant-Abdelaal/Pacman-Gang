@@ -15,6 +15,7 @@ Ghost::Ghost() :Object() {
 					g >> gpath[i][j];
 	}
 	g.close();
+	//setting the adjacency list 
 	int r, c, node;
 	for (int i = 0; i < row; i++)
 		for (int j = 0; j < col; j++)
@@ -97,7 +98,11 @@ void Ghost::setGhost(string n, int initialR, int initialC, string imagename1, st
 	shape.setTexture(&texture);
 	shape.setSize(Vector2f(32, 32));
 
-	this->addSnapshots(imagename1, imagename2, imagename3);
+	this->snapshot.resize(4);
+	snapshot[0].loadFromFile(imagename1);
+	snapshot[1].loadFromFile(imagename2);
+	snapshot[2].loadFromFile(imagename3);
+	snapshot[3].loadFromFile(imagename2);
 
 	if (sl)
 	{
@@ -110,11 +115,13 @@ void Ghost::setGhost(string n, int initialR, int initialC, string imagename1, st
 		wait = 0;
 }
 
+//moving the ghost to a specific node (returned by getDirection)
+
 void Ghost::move(int node)
 {
-	if (canMove)
+	if (canMove) //if the ghost can move
 	{
-		if (!wait)
+		if (!wait) //if this is not from the initial obligatory left moves
 		{
 			bool f = 1;
 			for (int i = 0; i < row && f; i++)
@@ -127,11 +134,13 @@ void Ghost::move(int node)
 					}
 			updatePosition();
 		}
-		else
+		//if this is from the initial obligatory left moves, then go left
+		//According to the initial position of the ghost, he will be obliged to number of moves to go left (which is the variable wait)
+		else 
 		{
 			switch (wait)
 			{
-			case 3:
+			case 3:				
 				for (int i = 0; i < row; i++)
 					for (int j = 0; j < col; j++)
 						if (gpath[i][j] == 68)
@@ -180,10 +189,13 @@ void Ghost::unFreight() //To go out of freight mode
 	shape.setFillColor(Color::White);
 }
 
+
+//Get the node that the ghost should go next
+//BFS from pacman to the ghost , the adjascent node to the ghost that has less cost by 1 is the next node
 int Ghost::getDirection(int  x, int y, vector<int> occupied)
 {
 	queue<pair<int, int> >q;
-	q.push(make_pair(gpath[curRow][curColumn], 0));
+	q.push(make_pair(gpath[x][y], 0));
 	pair<int, int> cur;
 	memset(cost, -1, sizeof cost);
 	while (q.size())
@@ -192,7 +204,7 @@ int Ghost::getDirection(int  x, int y, vector<int> occupied)
 		q.pop();
 		if (cost[cur.first] != -1) continue;
 		cost[cur.first] = cur.second;
-		if (cur.first == gpath[x][y])
+		if (cur.first == gpath[curRow][curColumn])
 			break;
 		for (int i = 0; i < graph[cur.first].size(); i++)
 		{
@@ -202,16 +214,14 @@ int Ghost::getDirection(int  x, int y, vector<int> occupied)
 	}
 	while (q.size())
 		q.pop();
-	q.push(cur);
-	while (q.size())
+	for (int i = 0; i < graph[gpath[curRow][curColumn]].size(); i++)
 	{
-		cur = q.front();
-		q.pop();
-		if (cur.second == 1)
+		if (cost[graph[gpath[curRow][curColumn]][i]] == cost[gpath[curRow][curColumn]] - 1)
+		{
+			cur.first = graph[gpath[curRow][curColumn]][i];
+			cur.second = cost[graph[gpath[curRow][curColumn]][i]];
 			break;
-		for (int i = 0; i < graph[cur.first].size(); i++)
-			if (cost[graph[cur.first][i]] == cur.second - 1)
-				q.push(make_pair(graph[cur.first][i], cur.second - 1));
+		}
 	}
 	for (int i = 0; i < occupied.size(); i++)
 		if (occupied[i] == cur.first)
@@ -219,6 +229,8 @@ int Ghost::getDirection(int  x, int y, vector<int> occupied)
 	return cur.first;
 }
 
+//Get the node that the ghost should go next in fright mode
+//BFS from the ghost to the initial position, return back till you reach the node with cost 1, this is the next node
 
 int Ghost::getFreightDirection(vector<int> occupied)
 {
@@ -260,6 +272,7 @@ int Ghost::getFreightDirection(vector<int> occupied)
 			cur.first = gpath[curRow][curColumn];
 	return cur.first;
 }
+
 
 void Ghost::okMove(bool n)
 {

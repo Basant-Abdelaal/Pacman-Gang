@@ -61,22 +61,13 @@ void Object::restart() {
 	updatePosition();
 }
 
-void Object::addSnapshots(string n1, string n2, string n3) {
-	snapshot.clear();
-	snapshot.resize(4);
-	snapshot[0].loadFromFile(n1);
-	snapshot[1].loadFromFile(n2);
-	snapshot[2].loadFromFile(n3);
-	snapshot[3].loadFromFile(n2);
-
-	snapshotIndex = 0;
-}
 
 
-void Object::updateAnimation() {
+
+void Object::updateAnimation(int n) {
 	if (animationTimer.getElapsedTime().asMilliseconds() > 250) { //So that the total time of the animation is 1 second
 		snapshotIndex = (snapshotIndex + 1) % 4;
-		texture = snapshot[snapshotIndex];
+		texture = snapshot[snapshotIndex+n];
 		animationTimer.restart();
 	}
 }

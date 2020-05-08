@@ -32,8 +32,8 @@ public:
 	void updatePosition(); //updates the horizontal and vertical positions according to the row and column
 	void drawOnWindow(RenderWindow& win);
 	void move() {};
-	void addSnapshots(string, string, string); //adds snapshots of the object's animation
-	void updateAnimation(); //updates object's animation
+	//void addSnapshots(string, string, string, string, string, string, string, string, string, string, string, string); //adds snapshots of the object's animation
+	void updateAnimation(int); //updates object's animation
 	void restart(); //object returns to initial state
 };
 
