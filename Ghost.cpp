@@ -192,10 +192,11 @@ void Ghost::unFreight() //To go out of freight mode
 
 //Get the node that the ghost should go next
 //BFS from pacman to the ghost , the adjascent node to the ghost that has less cost by 1 is the next node
+
 int Ghost::getDirection(int  x, int y, vector<int> occupied)
 {
 	queue<pair<int, int> >q;
-	q.push(make_pair(gpath[x][y], 0));
+	q.push(make_pair(gpath[curRow][curColumn], 0));
 	pair<int, int> cur;
 	memset(cost, -1, sizeof cost);
 	while (q.size())
@@ -204,7 +205,7 @@ int Ghost::getDirection(int  x, int y, vector<int> occupied)
 		q.pop();
 		if (cost[cur.first] != -1) continue;
 		cost[cur.first] = cur.second;
-		if (cur.first == gpath[curRow][curColumn])
+		if (cur.first == gpath[x][y])
 			break;
 		for (int i = 0; i < graph[cur.first].size(); i++)
 		{
@@ -214,14 +215,16 @@ int Ghost::getDirection(int  x, int y, vector<int> occupied)
 	}
 	while (q.size())
 		q.pop();
-	for (int i = 0; i < graph[gpath[curRow][curColumn]].size(); i++)
+	q.push(cur);
+	while (q.size())
 	{
-		if (cost[graph[gpath[curRow][curColumn]][i]] == cost[gpath[curRow][curColumn]] - 1)
-		{
-			cur.first = graph[gpath[curRow][curColumn]][i];
-			cur.second = cost[graph[gpath[curRow][curColumn]][i]];
+		cur = q.front();
+		q.pop();
+		if (cur.second == 1)
 			break;
-		}
+		for (int i = 0; i < graph[cur.first].size(); i++)
+			if (cost[graph[cur.first][i]] == cur.second - 1)
+				q.push(make_pair(graph[cur.first][i], cur.second - 1));
 	}
 	for (int i = 0; i < occupied.size(); i++)
 		if (occupied[i] == cur.first)
