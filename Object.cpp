@@ -8,7 +8,7 @@ Object::Object() {
 	initialRow = 0;
 }
 
-Object::Object(string n, int initialR, int initialC, string imagename) 
+Object::Object(string n, int initialR, int initialC, string imagename)
 {
 	name = n;
 	curRow = initialR;
@@ -21,29 +21,29 @@ Object::Object(string n, int initialR, int initialC, string imagename)
 	shape.setSize(Vector2f(32, 32));
 }
 
-int Object::getRow() 
+int Object::getRow()
 {
-	
+
 	return curRow;
 }
 
-int Object::getColumn() 
+int Object::getColumn()
 {
 	return curColumn;
 }
 
-void Object::drawOnWindow(RenderWindow& win) 
+void Object::drawOnWindow(RenderWindow& win)
 {
 	shape.setPosition(Vector2f(curHorizontal, curVertical));
 	win.draw(shape);
 }
 
-int Object::getHorizontal()
+int Object::getHorizontal() //To get actual horizontal position on screen
 {
 	return curHorizontal;
 }
 
-int Object::getVertical()
+int Object::getVertical() //To get actual vertical position on screen
 {
 	return curVertical;
 }
@@ -61,21 +61,13 @@ void Object::restart() {
 	updatePosition();
 }
 
-void Object::addSnapshots(string n1, string n2, string n3) {
-	snapshot.resize(4);
-	snapshot[0].loadFromFile(n1);
-	snapshot[1].loadFromFile(n2);
-	snapshot[2].loadFromFile(n3);
-	snapshot[3].loadFromFile(n2);
-
-	snapshotIndex = 0;
-}
 
 
-void Object::updateAnimation() {
-	if (animationTimer.getElapsedTime().asMilliseconds() > 250) {
+
+void Object::updateAnimation(int n) {
+	if (animationTimer.getElapsedTime().asMilliseconds() > 250) { //So that the total time of the animation is 1 second
 		snapshotIndex = (snapshotIndex + 1) % 4;
-		texture = snapshot[snapshotIndex];
+		texture = snapshot[snapshotIndex+n];
 		animationTimer.restart();
 	}
 }

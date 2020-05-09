@@ -13,29 +13,30 @@ private:
 	int level;
 	int pellets[row][col];
 	RectangleShape board[row][col];
-	Player *pacman;
+	Player* pacman;
 	Ghost* ghosts;
 	Font font;
-	Text scoreHeader, highScoreHeader, levelHeader, score, levelText;
-	int pelletsNum;
+	Text scoreHeader, highScoreHeader, levelHeader, score, levelText, highScore;
+	//vector <Text>high;
+	int pelletsNum; //The number of pellets in the game
 	Texture bricks, small_p, big_p, space, fruit1, fruit2, fruit3, fruit4, fruit5, fruit6;
-	vector <RectangleShape> fruit;
+	vector <RectangleShape> fruit; //all the fruits that could be added
 	int fruitOrder; //Index to which fruit from the vector would be drawn next
 	bool fruitAdded; //whether to draw a fruit or not
-	Clock clydeTimer;
-	/*bool directionOk(Ghost&);*/
-	/*SoundBuffer eat;
-	Sound s;*/
+	Clock clydeTimer; //Timer to know when should clyde move
+	SoundBuffer eat;
+	Sound eatSound;
 public:
 	Screen(Player& pac, Ghost[4]);
-	bool updatePac(char&);
-	void updateGhosts();
-	bool ghostCollision();
-	void drawAll(RenderWindow&);
+	pair<bool,bool> updatePac(char&);
+	void updateGhosts(bool freight);
+	bool ghostCollision(); //if player collides with any ghost
+	void drawAll(RenderWindow&); //To draw all objects in class Screen
 	void setLevel(int);
 	int getLevel() { return level; }
 	void addFruit();
 	bool isFruitAdded() { return fruitAdded; }
+	void setHighScore(int n);
 };
 
 
