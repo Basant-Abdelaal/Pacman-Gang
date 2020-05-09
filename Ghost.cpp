@@ -196,41 +196,37 @@ void Ghost::unFreight() //To go out of freight mode
 
 int Ghost::getDirection(int  x, int y, vector<int> occupied)
 {
-	queue<pair<int, int> >q;  //bfs queue<position node, level>
-	q.push(make_pair(gpath[curRow][curColumn], 0)); //starting from the node of the ghost
+	queue<pair<int, int> >q;
+	q.push(make_pair(gpath[x][y], 0));
 	pair<int, int> cur;
 	memset(cost, -1, sizeof cost);
+	memset(parent, -1, sizeof parent);
 	while (q.size())
 	{
 		cur = q.front();
 		q.pop();
-		if (cost[cur.first] != -1) continue;  //node is visited already
+		if (cost[cur.first] != -1) continue;
 		cost[cur.first] = cur.second;
-		if (cur.first == gpath[x][y])  //if pacman is found
+		if (cur.first == gpath[curRow][curColumn])
 			break;
-		for (int i = 0; i < graph[cur.first].size(); i++) //loop on the adjacent nodes
+		for (int i = 0; i < graph[cur.first].size(); i++)
 		{
-			if (cost[graph[cur.first][i]] == -1) //if not visited, then push in the queue
+			if (cost[graph[cur.first][i]] == -1)
+			{
 				q.push(make_pair(graph[cur.first][i], cur.second + 1));
+				parent[graph[cur.first][i]] = cur.first;
+			}
 		}
 	}
 	while (q.size())
 		q.pop();
-	q.push(cur); //push pacman to the queue
-	while (q.size())
-	{
-		cur = q.front();
-		q.pop();
-		if (cur.second == 1)
-			break;
-		for (int i = 0; i < graph[cur.first].size(); i++)  //loop on the adjacent node
-			if (cost[graph[cur.first][i]] == cur.second - 1) //if it is less than the level by 1, push it to the queue
-				q.push(make_pair(graph[cur.first][i], cur.second - 1));
-	}
+	cur.first = parent[gpath[curRow][curColumn]];
+	if (cur.first == -1)
+		cur.first = gpath[x][y];
 	for (int i = 0; i < occupied.size(); i++)
 		if (occupied[i] == cur.first)
 			cur.first = gpath[curRow][curColumn];
-	return cur.first; 
+	return cur.first;
 }
 
 //Get the node that the ghost should go next in fright mode

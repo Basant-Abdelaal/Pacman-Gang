@@ -15,8 +15,9 @@ class Ghost :public Object
 private:
 	bool canMove; //whether the ghost can move or not
 	int gpath[row][col]; 
-	vector<int> graph[200];
+	vector<int> graph[200]; //adjacency list
 	int cost[200];
+	int parent[200];
 	bool startLeft;
 	int wait;
 public:
