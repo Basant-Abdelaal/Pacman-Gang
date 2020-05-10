@@ -341,7 +341,6 @@ int main()
 				
 				for (int i = 0; i < 4; i++)
 					ghosts[i].restart();
-				cout <<"Here: "<< pacman.getScoreInt() << endl;
 				if (pacman.getScoreInt() > myPlayer.second) //Updating the score
 				{
 
@@ -350,7 +349,6 @@ int main()
 						{
 							myPlayer.second = pacman.getScoreInt();
 							players[i].second = myPlayer.second;
-							cout << "Hereee!\n";
 						}
 				}
 				
