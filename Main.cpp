@@ -14,7 +14,7 @@ fstream playersData;
 vector<pair<string, int>> players;
 pair<string, int> myPlayer; //the player who is playing
 vector<Text> playerText;
-
+vector<Text> dashboard;
 
 bool sortbysec(const pair<string, int>& a,  
 	const pair<string, int>& b) // sorting the players by the score 
@@ -65,7 +65,13 @@ int main()
 	chooseLevel.setCharacterSize(23);
 	chooseLevel.setFillColor(Color::White);
 	chooseLevel.setFont(font);
-	window.create(VideoMode(800, 800), "Maze");
+	window.create(VideoMode(1200, 800), "Maze");
+	Text dashboardHeader;
+	dashboardHeader.setString("Dashboard");
+	dashboardHeader.setPosition(Vector2f(100+32*20, 32*10));
+	dashboardHeader.setCharacterSize(23);
+	dashboardHeader.setFillColor(Color::White);
+	dashboardHeader.setFont(font);
 
 	string pacmanTextures[12] = { "pacman.png", "pacman2.png", "pacman3.png" , "pacman-up.png", "pacman2-up.png", "pacman3-up.png" ,"pacman-left.png", "pacman2-left.png", "pacman3-left.png" , "pacman-down.png", "pacman2-down.png", "pacman3-down.png" };
 	string mspacmanTextures[12] = { "mspacman.png", "mspacman2.png", "mspacman3.png" , "mspacman-up.png", "mspacman2-up.png", "mspacman3-up.png" ,"mspacman-left.png", "mspacman2-left.png", "mspacman3-left.png" , "mspacman-down.png", "mspacman2-down.png", "mspacman3-down.png" };
@@ -139,8 +145,22 @@ int main()
 	}
 	str.clear();
 
+	sort(players.begin(), players.end(), sortbysec);
 
-		myScreen.setHighScore(players[0].second);
+	dashboard.resize(5);
+	for (int i = 0; i < players.size() && i<5; i++)
+	{
+		str.clear();
+		str += players[i].first;
+		str += '  ';
+		str += to_string(players[i].second);
+		dashboard[i].setString(str);
+		dashboard[i].setPosition(Vector2f(100+32*19,320+32*(i+2)));
+		dashboard[i].setCharacterSize(23);
+		dashboard[i].setFillColor(Color::White);
+		dashboard[i].setFont(font);
+	}
+	str.clear();
 	
 	//cout << "players size is " << players.size() << endl;
 	while (window.isOpen())
@@ -165,7 +185,6 @@ int main()
 
 			window.clear();
 			myScreen.drawAll(window);
-			myScreen.setHighScore(players[0].second);//update highscore
 			window.draw(choosePlayer);
 			
 			window.display();
@@ -183,6 +202,8 @@ int main()
 					playerChosen = 1;
 					myPlayer.first = str;
 					myPlayer.second = 0;
+					myScreen.setPlayer(str);
+					players.push_back(myPlayer);
 				}
 				else if (e.type == sf::Event::TextEntered)
 				{
@@ -197,7 +218,6 @@ int main()
 
 			window.clear();
 			myScreen.drawAll(window);
-			myScreen.setHighScore(players[0].second);
 			window.draw(enterNameText); //cout << str << endl;
 
 			window.display();
@@ -215,27 +235,28 @@ int main()
 				{
 					if ((e.key.code == Keyboard::Num1 || e.key.code == Keyboard::Numpad1) && players.size() >= 1) {
 						myPlayer = players[0];
-						myScreen.setHighScore(players[0].second);
+						myScreen.setPlayer(players[0].first);
 						playerChosen = 1;
 					}
 					else if ((e.key.code == Keyboard::Num2 || e.key.code == Keyboard::Numpad2) && players.size() >= 2) {
 						myPlayer = players[1];
-						myScreen.setHighScore(players[0].second);
+						myScreen.setPlayer(players[1].first);
 						playerChosen = 1;
 					}
 					else if ((e.key.code == Keyboard::Num3 || e.key.code == Keyboard::Numpad3) && players.size() >= 3) {
 						myPlayer = players[2];
-						myScreen.setHighScore(players[0].second);
+						myScreen.setPlayer(players[2].first);
 						playerChosen = 1;
 					}
 					else if ((e.key.code == Keyboard::Num4 || e.key.code == Keyboard::Numpad4) && players.size() >= 4) {
 						myPlayer = players[3];
-						myScreen.setHighScore(players[0].second);
+						myScreen.setPlayer(players[3].first);
 						playerChosen = 1;
+						//cout << myPlayer.second << endl;
 					}
 					else if ((e.key.code == Keyboard::Num5 || e.key.code == Keyboard::Numpad5) && players.size()>=5) {
 						myPlayer = players[4];
-						myScreen.setHighScore(players[0].second);
+						myScreen.setPlayer(players[4].first);
 						playerChosen = 1;
 					}
 				}
@@ -248,7 +269,6 @@ int main()
 			myScreen.drawAll(window);
 			for (int i = 0; i < playerText.size(); i++) 
 				window.draw(playerText[i]);
-				myScreen.setHighScore(players[0].second);
 		
 			window.display();
 		}
@@ -304,7 +324,6 @@ int main()
 				window.draw(chooseLevel);
 			else
 				window.draw(Ready);
-			myScreen.setHighScore(players[0].second);
 			window.display();
 		}
 
@@ -319,17 +338,24 @@ int main()
 				window.draw(FinalText);
 				avatarChosen = false;
 				isLevelChosen = false;
-				pacman.restart();
+				
 				for (int i = 0; i < 4; i++)
 					ghosts[i].restart();
-				
-				if (pacman.getScoreInt() > myPlayer.second)
+				cout <<"Here: "<< pacman.getScoreInt() << endl;
+				if (pacman.getScoreInt() > myPlayer.second) //Updating the score
 				{
-					myPlayer.second = pacman.getScoreInt();
-					players.push_back(myPlayer);
-				}
-				sort(players.begin(), players.end(), sortbysec);
 
+					for (int i = 0; i < players.size(); i++)
+						if (players[i] == myPlayer)
+						{
+							myPlayer.second = pacman.getScoreInt();
+							players[i].second = myPlayer.second;
+							cout << "Hereee!\n";
+						}
+				}
+				
+				sort(players.begin(), players.end(), sortbysec);
+				pacman.restart();
 				if(players.size()>5)
 					players.resize(5);
 				playersData.open("players.txt");
@@ -337,11 +363,24 @@ int main()
 				{
 					playersData << players[i].first << " " << to_string(players[i].second) << endl;
 				}
+				playersData.close();
+				for (int i = 0; i < players.size() && i<5 && i<5; i++)
+				{
+					str.clear();
+					str += players[i].first;
+					str += '  ';
+					str += to_string(players[i].second);
+					dashboard[i].setString(str);
+				}
 			}
+			
 			for (int i = 0; i < lives.size(); i++)
 				window.draw(lives[i]);
 			for (int i = 0; i < 4; i++)
 				ghosts[i].updateAnimation(0);
+			window.draw(dashboardHeader);
+			for (int i = 0; i<players.size() && i<5; i++)
+				window.draw(dashboard[i]);
 			window.display();
 		}
 	}
@@ -393,7 +432,6 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 			sound.setBuffer(buffer);
 			sound.play();
 			FinalText.setString("Congratulations");
-			
 			return false;
 		}
 		if (s.second)
@@ -404,10 +442,10 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 		}
 		if (myScreen.ghostCollision())
 		{
-			if (freight) //if pacman eats the ghost in fright mode, he gains 100 points
+			if (freight) //if pacman eats the ghost in freight mode, he gains 300 points
 			{
-				pacman.increaseScore(100);
-
+				pacman.increaseScore(300);
+				myScreen.UpdateScore();
 			}
 			else
 			{
@@ -429,7 +467,7 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 
 		timerP.restart();
 	}
-	if (timerG.getElapsedTime().asMilliseconds() > 700 - 100 * myScreen.getLevel()) {
+	if (timerG.getElapsedTime().asMilliseconds() > 700 - 200 * myScreen.getLevel()) {
 
 		myScreen.updateGhosts(freight);
 		if (freight) //timer for the fright mode
@@ -448,8 +486,8 @@ bool runLevel(Screen& myScreen, Player& pacman, RenderWindow& window, Event& e, 
 		{
 			if (freight)
 			{
-				pacman.increaseScore(100);
-				
+				pacman.increaseScore(300);
+				myScreen.UpdateScore();
 			}
 			else
 			{

@@ -64,11 +64,11 @@ Screen::Screen(Player& pac, Ghost G[4])
 	levelHeader.setCharacterSize(27); levelHeader.setFillColor(Color::White); levelHeader.setFont(font);
 	levelText.setString("Easy"); levelText.setPosition(Vector2f(32 * 15, 32));
 	levelText.setCharacterSize(27); levelText.setFillColor(Color::White); levelText.setFont(font);
-	highScoreHeader.setString("HighScore:");
-	highScoreHeader.setPosition(Vector2f(32 * 6, 0));
-	highScoreHeader.setCharacterSize(27);
-	highScoreHeader.setFillColor(Color::White);
-	highScoreHeader.setFont(font);
+	playerHeader.setString("Player:");
+	playerHeader.setPosition(Vector2f(32 * 6, 0));
+	playerHeader.setCharacterSize(27);
+	playerHeader.setFillColor(Color::White);
+	playerHeader.setFont(font);
 
 	//setting fruits' textures
 	fruit1.loadFromFile("fruit1.png");
@@ -99,14 +99,13 @@ Screen::Screen(Player& pac, Ghost G[4])
 
 }
 
-void Screen::setHighScore(int n)
+void Screen::setPlayer(string n)
 {
-	string str = to_string(n);
-	highScore.setString(str);
-	highScore.setPosition(Vector2f(32 * 6, 32));
-	highScore.setCharacterSize(27);
-	highScore.setFillColor(Color::White);
-	highScore.setFont(font);
+	player.setString(n);
+	player.setPosition(Vector2f(32 * 6, 32));
+	player.setCharacterSize(27);
+	player.setFillColor(Color::White);
+	player.setFont(font);
 
 }
 
@@ -172,13 +171,13 @@ pair<bool,bool> Screen::updatePac(char& m)
 			eatSound.setBuffer(eat);
 			eatSound.play();
 			pacman->increaseScore(10);
-			score.setString(pacman->getScore());
+			UpdateScore();
 			pelletsNum--;
 		}
 		else if (pellets[newRow][newColumn] == 2)
 		{
 			pacman->increaseScore(50);
-			score.setString(pacman->getScore());
+			UpdateScore();
 			ans.second = 1;  //freight mode
 			pelletsNum--;
 		}
@@ -193,7 +192,7 @@ pair<bool,bool> Screen::updatePac(char& m)
 			eatSound.setBuffer(eat);
 			eatSound.play();
 			pacman->increaseScore(250 * (fruitOrder + 1));
-			score.setString(pacman->getScore());
+			UpdateScore();
 
 			fruitOrder = (fruitOrder + 1) % fruit.size();
 		}
@@ -250,8 +249,8 @@ void Screen::drawAll(RenderWindow& win)
 	win.draw(score);
 	win.draw(levelText);
 	win.draw(levelHeader);
-	win.draw(highScoreHeader);
-	win.draw(highScore);
+	win.draw(playerHeader);
+	win.draw(player);
 }
 
 void Screen::setLevel(int n) {
@@ -326,3 +325,7 @@ void Screen::addFruit() {
 	fruitAdded = true;
 }
 
+void Screen::UpdateScore()
+{
+	score.setString(pacman->getScore());
+}

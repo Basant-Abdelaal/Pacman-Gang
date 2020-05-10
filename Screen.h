@@ -16,7 +16,7 @@ private:
 	Player* pacman;
 	Ghost* ghosts;
 	Font font;
-	Text scoreHeader, highScoreHeader, levelHeader, score, levelText, highScore;
+	Text scoreHeader, playerHeader, levelHeader, score, levelText, player;
 	//vector <Text>high;
 	int pelletsNum; //The number of pellets in the game
 	Texture bricks, small_p, big_p, space, fruit1, fruit2, fruit3, fruit4, fruit5, fruit6;
@@ -36,7 +36,8 @@ public:
 	int getLevel() { return level; }
 	void addFruit();
 	bool isFruitAdded() { return fruitAdded; }
-	void setHighScore(int n);
+	void setPlayer(string n);
+	void UpdateScore();
 };
 
 
